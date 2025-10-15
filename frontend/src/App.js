@@ -1,13 +1,14 @@
+
 import React from "react";
-import AddPerson from "./AddPerson";
+import AppRouter from "./routes/AppRouter";
+import "./App.css";
 
 function App() {
-  return (
-      <div>
-        <h1>Test komunikacji frontend-backend</h1>
-        <AddPerson />
-      </div>
-  );
+    return (
+        <div className="App">
+            <AppRouter />
+        </div>
+    );
 }
 
 export default App;

@@ -1,0 +1,48 @@
+.dashboard-container {
+    background-color: #f8f5f2;
+    min-height: 100vh;
+}
+
+.dashboard-content {
+    padding: 60px 80px;
+    text-align: center;
+}
+
+h1 {
+    color: #5b4636;
+    font-family: "Playfair Display", serif;
+}
+
+p {
+    color: #7a6757;
+}
+
+.dashboard-grid {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 30px 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card h3 {
+    color: #5b4636;
+}
+
+.dashboard-card p {
+    color: #a57c65;
+    font-size: 0.95rem;
+}

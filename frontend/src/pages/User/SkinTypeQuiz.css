@@ -1,0 +1,183 @@
+/* === GLOBALNY LAYOUT STRONY === */
+.quiz-container {
+    background-color: #f8f5f2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === NAVBAR (identyczny jak w panelu) === */
+.quiz-container .navbar {
+    background-color: #fff !important;
+    width: 100%;
+    padding: 1.2rem 5% !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100;
+}
+
+.navbar-logo {
+    font-family: "Playfair Display", serif;
+    font-size: 1.4rem;
+    color: #5b4636;
+    font-weight: 600;
+}
+
+.navbar-links {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar-links a {
+    color: #5b4636;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #a57c65;
+}
+
+/* === GŁÓWNA SEKCJA QUIZU === */
+.quiz-content {
+    flex: 1;
+    background-color: #fff;
+    max-width: 850px;
+    margin: 3rem auto;
+    padding: 2.5rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.quiz-content h1 {
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    color: #4b3b2a;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.quiz-content p {
+    color: #7a6a5a;
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* === PYTANIA === */
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-group p {
+    font-weight: 600;
+    color: #4b3b2a;
+    margin-bottom: 0.8rem;
+}
+
+/* === RADIO BUTTONY === */
+.form-group label {
+    display: block;
+    background-color: #f9f6f3;
+    border: 1px solid #e3d9cf;
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    color: #5b4636;
+}
+
+.form-group label:hover {
+    background-color: #f2eae4;
+}
+
+.form-group input[type="radio"] {
+    accent-color: #a57c65;
+    margin-right: 0.6rem;
+}
+
+/* Podświetlenie zaznaczonej opcji */
+.form-group input[type="radio"]:checked + span,
+.form-group label:has(input[type="radio"]:checked) {
+    background-color: #e9ddd2;
+    border-color: #d2b8a3;
+}
+
+/* === PRZYCISK SPRAWDŹ === */
+.submit-btn {
+    display: block;
+    margin: 2rem auto 0 auto;
+    padding: 0.8rem 2rem;
+    background-color: #a57c65;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #8d6651;
+}
+
+/* === SEKCJA WYNIKÓW === */
+.results-section {
+    text-align: center;
+}
+
+.results-section h2 {
+    font-family: "Playfair Display", serif;
+    color: #4b3b2a;
+    margin-bottom: 1rem;
+}
+
+.results-section p {
+    color: #7a6a5a;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.results-details {
+    background-color: #f9f6f3;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.results-details h3 {
+    color: #4b3b2a;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.results-details p {
+    color: #6b5b4b;
+    margin-bottom: 1.2rem;
+}
+
+/* === PRZYCISK RESET === */
+.reset-btn {
+    background-color: #a57c65;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 2rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.reset-btn:hover {
+    background-color: #8d6651;
+}

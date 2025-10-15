@@ -1,0 +1,41 @@
+.home-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* zdjęcie w tle */
+.home-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../../assets/images/home_rose.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.9) blur(3px); /* delikatne rozmycie i przyciemnienie */
+    opacity: 0.35; /* półprzezroczystość */
+    z-index: 0;
+}
+
+/* zawartość na wierzchu */
+.home-card {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(165, 124, 101, 0.15);
+    padding: 60px 80px;
+    text-align: center;
+    backdrop-filter: blur(5px); /* efekt szkła (glassmorphism) */
+    transition: transform 0.3s ease;
+}
+
+.home-card:hover {
+    transform: translateY(-4px);
+}

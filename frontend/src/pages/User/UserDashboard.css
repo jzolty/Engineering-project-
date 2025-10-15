@@ -1,0 +1,137 @@
+.dashboard-container {
+    background-color: #f8f5f2;
+    min-height: 100vh;
+}
+
+.dashboard-content {
+    padding: 60px 80px;
+    text-align: center;
+}
+
+h1 {
+    color: #5b4636;
+    font-family: "Playfair Display", serif;
+}
+
+p {
+    color: #7a6757;
+}
+
+/* === Układ kafelków === */
+.dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Duży kafelek u góry */
+/* Duży kafelek "Utwórz plan pielęgnacji" */
+/* Duży kafelek u góry */
+.wide-card {
+    background-color: #fff; /* takie samo tło jak małe kafelki */
+    border-radius: 16px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wide-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.wide-card h3 {
+    color: #5b4636;
+    margin-bottom: 10px;
+}
+
+.wide-card p {
+    color: #a57c65;
+    font-size: 0.95rem;
+}
+
+
+/* Wiersz z kafelkami */
+.dashboard-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 40px; /* przywraca przestrzeń między kafelkami */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-top: 2rem;
+    justify-items: center;
+}
+
+
+/* Każdy mały kafelek */
+/* Pojedynczy kafelek */
+.dashboard-card {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+    min-width: 250px;
+    max-width: 300px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card h3 {
+    color: #5b4636;
+    margin-bottom: 0.75rem;
+}
+
+.dashboard-card p {
+    color: #a57c65;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Małe przyciski wewnątrz dużego kafelka */
+.sub-card-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.sub-card {
+    background-color: #e6b7b2;
+    color: white;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.sub-card:hover {
+    background-color: #d89c97;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .wide-card {
+        width: 90%;
+    }
+
+    .dashboard-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard-card {
+        max-width: none;
+    }
+}

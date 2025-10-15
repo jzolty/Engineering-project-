@@ -1,0 +1,60 @@
+
+
+body {
+    margin: 0;
+    background-color: #f8f5f2;
+    font-family: "Poppins", sans-serif;
+    color: #5b4636;
+    letter-spacing: 0.3px;
+}
+
+/* Ustawienia dla nagłówków i logotypu */
+h1, .logo-text {
+    font-family: "Playfair Display", serif;
+}
+
+/* Nagłówki */
+h2, h3, h4, h5 {
+    color: #2c3e50;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Przyciski */
+button {
+    font-family: inherit;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Linki */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Karty, kontenery, przyciski (opcjonalnie) */
+.card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Główne kontenery */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
