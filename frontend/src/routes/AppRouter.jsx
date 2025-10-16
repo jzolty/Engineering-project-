@@ -6,6 +6,7 @@ import AdminDashboard from "../pages/Admin/AdminDashboard";
 import UserDashboard from "../pages/User/UserDashboard";
 import SkinAnalysis from "../pages/User/SkinAnalysis";
 import SkinTypeQuiz from "../pages/User/SkinTypeQuiz";
+import Recommendations from "../pages/User/Recommendations";
 import NotFound from "../pages/NotFound";
 
 const AppRouter = () => {
@@ -17,6 +18,7 @@ const AppRouter = () => {
                 <Route path="/user" element={<UserDashboard />} />
                 <Route path="/user/skin-analysis" element={<SkinAnalysis />} />
                 <Route path="/user/skin-type" element={<SkinTypeQuiz />} />
+                <Route path="/user/recommendations" element={<Recommendations />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
 
