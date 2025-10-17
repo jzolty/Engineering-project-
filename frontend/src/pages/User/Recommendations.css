@@ -85,3 +85,21 @@
     margin: 0.4rem 0;
     color: #4d3a2e;
 }
+
+.rec-type {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-left: 6px;
+}
+
+.rec-type.auto {
+    background-color: #f3d9f3;
+    color: #d89c97;
+}
+
+.rec-type.manual {
+    background-color: #f4e2d1;
+    color: #8b5e3c;
+}

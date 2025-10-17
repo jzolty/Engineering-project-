@@ -8,6 +8,7 @@ const Recommendations = () => {
             id: 1,
             date: "2025-10-15",
             routineTime: "Poranna rutyna",
+            source: "AUTO", // 🔹 typ rekomendacji
             reasons: ["Skóra tłusta", "Cera trądzikowa"],
             products: [
                 { name: "Żel oczyszczający CeraVe", brand: "CeraVe", category: "cleanser" },
@@ -20,6 +21,7 @@ const Recommendations = () => {
             id: 2,
             date: "2025-10-10",
             routineTime: "Wieczorna rutyna",
+            source: "MANUAL", // 🔹 typ rekomendacji
             reasons: ["Cera sucha", "Wrażliwa"],
             products: [
                 { name: "Mleczko do demakijażu", brand: "Bioderma", category: "cleanser" },
@@ -45,11 +47,14 @@ const Recommendations = () => {
                                 className={selected.id === rec.id ? "active" : ""}
                                 onClick={() => setSelected(rec)}
                             >
-                                <div className="rec-title">{rec.routineTime}</div>
-                                <div className="rec-date">{rec.date}</div>
-                                <div className="rec-preview">
-                                    {rec.reasons.slice(0, 2).join(", ")}...
+                                <div className="rec-title">
+                                    {rec.routineTime}
+                                    <span className={`rec-type ${rec.source.toLowerCase()}`}>
+                    {rec.source === "AUTO" ? "Automatyczna" : "Ręczna"}
+                  </span>
                                 </div>
+                                <div className="rec-date">{rec.date}</div>
+                                <div className="rec-preview">{rec.reasons.slice(0, 2).join(", ")}...</div>
                             </li>
                         ))}
                     </ul>
@@ -62,6 +67,10 @@ const Recommendations = () => {
                             <h1>{selected.routineTime}</h1>
                             <p className="recommendation-date">
                                 <b>Data:</b> {selected.date}
+                            </p>
+                            <p>
+                                <b>Typ rekomendacji:</b>{" "}
+                                {selected.source === "AUTO" ? "Automatyczna" : "Ręczna"}
                             </p>
                             <p>
                                 <b>Powody:</b> {selected.reasons.join(", ")}
