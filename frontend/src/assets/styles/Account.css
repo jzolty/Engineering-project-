@@ -1,0 +1,125 @@
+.account-page {
+    background-color: #faf7f4;
+    min-height: 100vh;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.account-container {
+    width: 60%;
+    background: #fffdfc;
+    box-shadow: 0 2px 10px rgba(150, 120, 90, 0.15);
+    border-radius: 20px;
+    padding: 2rem 3rem;
+}
+
+.account-container h2 {
+    color: #5b3a1d;
+    margin-bottom: 1rem;
+}
+
+.account-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.account-form label {
+    font-weight: 600;
+    color: #4a3a2d;
+}
+
+.account-form input {
+    border: 1px solid #e0d4c7;
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    background-color: #fcf9f7;
+}
+
+.account-form input[readonly] {
+    background-color: #f3eee9;
+    color: #7b6a57;
+}
+
+.account-form button {
+    background-color: #567a4e;
+    color: white;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.account-form button:hover {
+    background-color: #47683f;
+}
+
+/* Lista użytkowników */
+.userlist-section {
+    margin-top: 3rem;
+}
+
+.userlist-container {
+    margin-top: 1rem;
+}
+
+.userlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.add-btn {
+    background-color: #567a4e;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+}
+
+.add-btn:hover {
+    background-color: #47683f;
+}
+
+.userlist-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.userlist-table th {
+    background-color: #f7eee7;
+    color: #5b3a1d;
+    text-align: left;
+    padding: 0.8rem;
+}
+
+.userlist-table td {
+    padding: 0.8rem;
+    border-bottom: 1px solid #f1e5da;
+    color: #4a3a2d;
+}
+
+.actions {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.edit-icon {
+    color: #4b6cb7;
+    cursor: pointer;
+}
+
+.delete-icon {
+    color: #c62828;
+    cursor: pointer;
+}

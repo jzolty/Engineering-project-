@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../../components/common/Navbar";
+import Navbar from "../../components/Navbar/UserNavbar";
 import "./Products.css";
 
 const Products = () => {
@@ -200,7 +200,13 @@ const Products = () => {
                         <tbody>
                         {filteredProducts.map((p) => (
                             <tr key={p.id}>
-                                <td>{p.name}</td>
+                                <td
+                                    className="product-link"
+                                    onClick={() => window.location.href = `/products/${p.id}`}
+                                >
+                                    {p.name}
+                                </td>
+
                                 <td>{p.brand}</td>
                                 <td>{p.category}</td>
                                 <td>

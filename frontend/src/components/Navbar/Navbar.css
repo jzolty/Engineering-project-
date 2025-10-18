@@ -1,0 +1,80 @@
+/* === WSPÓLNY STYL DLA NAVBARA === */
+.navbar {
+    background-color: #fff;
+    width: 100%;
+    padding: 1rem 3%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    font-family: "Poppins", sans-serif;
+    overflow-x: clip; /* 🧩 ZAPOBIEGA PRZEWIJANIU W BOK */
+    max-width: 100vw; /* 🧩 nie pozwala flexowi wyjść poza ekran */
+    box-sizing: border-box;
+}
+
+/* LOGO PO LEWEJ */
+.navbar-logo {
+    font-family: "Playfair Display", serif;
+    font-size: 1.4rem;
+    color: #5b4636;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* LINKI PO PRAWEJ */
+.navbar-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.2rem;
+    flex-wrap: wrap; /* 🧩 dzięki temu linki łamią się przy mniejszych ekranach */
+    margin-left: auto;
+    white-space: nowrap;
+    overflow-x: hidden; /* 🧩 ukrywa ewentualne resztki flexa */
+}
+
+/* POJEDYNCZY LINK */
+.navbar-links a {
+    color: #5b4636;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #a57c65;
+}
+
+/* RESPONSYWNOŚĆ */
+@media (max-width: 1200px) {
+    .navbar-links {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem 2rem;
+    }
+
+    .navbar-links {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-top: 0.5rem;
+        gap: 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-links a {
+        font-size: 0.9rem;
+    }
+}

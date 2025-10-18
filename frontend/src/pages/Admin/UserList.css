@@ -1,0 +1,115 @@
+.userlist-page {
+    background-color: #faf7f4;
+    min-height: 100vh;
+    padding-bottom: 3rem;
+}
+
+/* GŁÓWNY BLOK */
+.userlist-container {
+    width: 85%;
+    max-width: 1300px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 2.5rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* NAGŁÓWEK LISTY */
+.userlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.8rem;
+}
+
+.userlist-header h4 {
+    color: #5b4636;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+/* PRZYCISK DODAWANIA */
+.add-btn {
+    background-color: #d4a692; /* ciepły beżowy róż */
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.add-btn:hover {
+    background-color: #b7856c;
+}
+
+/* TABELA */
+.userlist-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.userlist-table th,
+.userlist-table td {
+    padding: 1rem 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.userlist-table th {
+    background-color: #faf3ef;
+    color: #5b4636;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.userlist-table td {
+    color: #6b5b4b;
+    font-size: 0.95rem;
+}
+
+/* IKONY */
+.actions {
+    display: flex;
+    gap: 1.2rem;
+    justify-content: flex-start;
+}
+
+.edit-icon {
+    color: #b07d62;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.edit-icon:hover {
+    color: #7a4e38;
+}
+
+.delete-icon {
+    color: #c75b5b;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.delete-icon:hover {
+    color: #a93e3e;
+}
+
+/* RESPONSYWNOŚĆ */
+@media (max-width: 1024px) {
+    .userlist-container {
+        width: 95%;
+        padding: 2rem;
+    }
+
+    .userlist-table th,
+    .userlist-table td {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+}

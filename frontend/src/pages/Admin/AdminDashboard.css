@@ -17,32 +17,53 @@ p {
     color: #7a6757;
 }
 
-.dashboard-grid {
-    margin-top: 50px;
+/* === Siatka 2x2 kafelków === */
+.dashboard-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 30px;
+    gap: 40px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 3rem auto;
+    justify-items: center;
 }
 
+/* === Pojedynczy kafelek === */
 .dashboard-card {
-    background: #ffffff;
+    background-color: #fff;
     border-radius: 16px;
-    padding: 30px 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+    min-width: 250px;
+    max-width: 300px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .dashboard-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
 }
 
 .dashboard-card h3 {
     color: #5b4636;
+    margin-bottom: 0.75rem;
 }
 
 .dashboard-card p {
     color: #a57c65;
     font-size: 0.95rem;
+    margin: 0;
+}
+
+/* === Responsywność === */
+@media (max-width: 768px) {
+    .dashboard-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard-card {
+        max-width: none;
+    }
 }

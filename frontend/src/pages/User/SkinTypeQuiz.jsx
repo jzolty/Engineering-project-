@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./SkinTypeQuiz.css";
-import Navbar from "../../components/common/Navbar";
+import Navbar from "../../components/Navbar/UserNavbar";
 
 
 const SkinTypeQuiz = () => {

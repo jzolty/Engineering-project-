@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../../components/common/Navbar";
+import Navbar from "../../components/Navbar/UserNavbar";
 import "./Products.css";
 
 const ProductsList = () => {

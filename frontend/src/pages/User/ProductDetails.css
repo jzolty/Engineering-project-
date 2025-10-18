@@ -1,0 +1,129 @@
+.product-details {
+    background-color: #faf7f4;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Główne pudełko */
+.product-details-container {
+    background: #fffdfc;
+    box-shadow: 0 2px 12px rgba(150, 120, 90, 0.15);
+    border-radius: 20px;
+    width: 70%;
+    margin-top: 2rem;
+    padding: 2rem 3rem;
+    color: #4a3a2d;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Przycisk powrotu */
+.back-btn {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: #7b573d;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: color 0.2s ease;
+}
+
+.back-btn:hover {
+    color: #a3754f;
+}
+
+/* Nagłówek */
+.product-details h1 {
+    font-size: 1.8rem;
+    color: #5b3a1d;
+    margin-bottom: 0.2rem;
+}
+
+.product-details .brand {
+    font-size: 1.1rem;
+    color: #7b6a57;
+}
+
+.product-details .category {
+    font-size: 1rem;
+    font-style: italic;
+    color: #9a8575;
+    margin-bottom: 1rem;
+}
+
+/* Opis */
+.product-details .description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #4a3a2d;
+    margin-bottom: 1rem;
+}
+
+/* Sekcja informacji o produkcie */
+.product-info {
+    background-color: #f8f4ef;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.8rem 2rem;
+    font-size: 0.95rem;
+    color: #4d3b2f;
+}
+
+.product-info p {
+    margin: 0.3rem 0;
+}
+
+/* Skład (INCI) */
+.ingredients {
+    background-color: #fdfaf8;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 4px rgba(180, 150, 120, 0.1);
+}
+
+.ingredients h3 {
+    color: #5b3a1d;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+}
+
+.ingredients p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #4a3a2d;
+    text-align: justify;
+}
+
+/* Ikony stylowe */
+.icon-true {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.icon-false {
+    color: #c62828;
+    font-weight: bold;
+}
+
+.icon-unknown {
+    color: #b89b8c;
+    font-weight: bold;
+}
+
+/* Responsywność */
+@media (max-width: 992px) {
+    .product-details-container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+
+    .product-info {
+        grid-template-columns: 1fr;
+    }
+}
