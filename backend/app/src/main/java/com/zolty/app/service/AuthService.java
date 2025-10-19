@@ -57,6 +57,8 @@ public class AuthService {
         }
 
         User user = userOpt.get();
+
+        // prawdzenie hasła — musi być matches, nie equals
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Błędne hasło");
         }
@@ -65,12 +67,13 @@ public class AuthService {
         return new AuthResponse(token, user.getEmail(), user.getRole());
     }
 
+
     private String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("role", user.getRole())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 godzina
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1000ms * 60s * 60m = 1 godzina
                 .signWith(SECRET_KEY)
                 .compact();
     }

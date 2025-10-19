@@ -1,38 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/UserNavbar";
+import { getCurrentUser } from "../../services/authService";
 import "../../assets/styles/Account.css";
 
-
-
-const Account = () => {
+const UserAccount = () => {
     const [user, setUser] = useState({
-        firstName: "Ola",
-        lastName: "Kucharczyk",
-        username: "ola_user",
-        email: "ola@example.com",
-        createdAt: "2025-02-18",
-        role: "USER",
+        id: "",
+        email: "",
+        username: "",
+        role: "",
+        provider: "",
+        providerId: "",
+        createdAt: "",
+        updatedAt: "",
     });
-
-    const [editedUser, setEditedUser] = useState(user);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setEditedUser(user);
-    }, [user]);
+        const fetchUser = async () => {
+            const data = await getCurrentUser();
+            if (data) {
+                setUser({
+                    id: data.id || "",
+                    email: data.email || "",
+                    username: data.username || "",
+                    role: data.role || "",
+                    provider: data.provider || "",
+                    providerId: data.providerId || "",
+                    createdAt: data.createdAt ? formatDate(data.createdAt) : "",
+                    updatedAt: data.updatedAt ? formatDate(data.updatedAt) : "",
+                });
+            }
+            setLoading(false);
+        };
+        fetchUser();
+    }, []);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setEditedUser((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString("pl-PL", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
     };
 
-    const handleSave = () => {
-        // tu później dodasz zapytanie PUT do API
-        console.log("Zapisano dane użytkownika:", editedUser);
-        alert("Dane zostały zaktualizowane!");
-    };
+    if (loading) {
+        return <p>Ładowanie danych konta...</p>;
+    }
 
     return (
         <div className="account-page">
@@ -40,47 +57,35 @@ const Account = () => {
 
             <div className="account-container">
                 <h2>Twoje konto</h2>
-                <form className="account-form">
-                    <label>Imię</label>
-                    <input
-                        type="text"
-                        name="firstName"
-                        value={editedUser.firstName}
-                        onChange={handleChange}
-                    />
+                <p>Zarządzaj swoimi danymi i informacjami konta.</p>
 
-                    <label>Nazwisko</label>
-                    <input
-                        type="text"
-                        name="lastName"
-                        value={editedUser.lastName}
-                        onChange={handleChange}
-                    />
+                <form className="account-form">
+                    <label>ID użytkownika</label>
+                    <input type="text" value={user.id} readOnly />
 
                     <label>Nazwa użytkownika</label>
-                    <input
-                        type="text"
-                        name="username"
-                        value={editedUser.username}
-                        onChange={handleChange}
-                    />
+                    <input type="text" value={user.username} readOnly />
 
                     <label>E-mail</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={editedUser.email}
-                        onChange={handleChange}
-                    />
-
-                    <label>Data utworzenia konta</label>
-                    <input type="text" value={user.createdAt} readOnly />
+                    <input type="email" value={user.email} readOnly />
 
                     <label>Rola</label>
                     <input type="text" value={user.role} readOnly />
 
-                    <button type="button" onClick={handleSave}>
-                        Zapisz zmiany
+                    <label>Provider</label>
+                    <input type="text" value={user.provider} readOnly />
+
+                    <label>ID providera</label>
+                    <input type="text" value={user.providerId || "—"} readOnly />
+
+                    <label>Data utworzenia konta</label>
+                    <input type="text" value={user.createdAt} readOnly />
+
+                    <label>Ostatnia aktualizacja</label>
+                    <input type="text" value={user.updatedAt} readOnly />
+
+                    <button type="button" disabled>
+                        Zapisz zmiany (wkrótce)
                     </button>
                 </form>
             </div>
@@ -88,4 +93,4 @@ const Account = () => {
     );
 };
 
-export default Account;
+export default UserAccount;

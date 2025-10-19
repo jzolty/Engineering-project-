@@ -19,18 +19,19 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .securityMatcher("/**") // <-- ważne w Spring Boot 3.5
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> {}) // używa naszego CorsFilter
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() //logowanie i rejestracja bez tokena
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/test/user").hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/api/test/admin").hasAuthority("ADMIN")
-                        .anyRequest().authenticated()  //resza wymaga tokena
+                        .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);  //rejestracja filtra jwt przed wbudowanym filtrem logowania
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

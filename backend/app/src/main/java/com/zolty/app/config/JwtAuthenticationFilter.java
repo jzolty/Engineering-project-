@@ -36,7 +36,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        // 🔥 1. Przepuszczamy żądania OPTIONS bez autoryzacji (ważne dla CORS!)
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
+
+        // 🔥 2. Jeśli brak nagłówka "Authorization", po prostu przechodzimy dalej
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -65,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
-            System.out.println("Błędny token JWT: " + e.getMessage());
+            System.out.println(" Błędny token JWT: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);

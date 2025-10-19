@@ -7,7 +7,7 @@
     overflow: hidden;
 }
 
-/* zdjęcie w tle */
+/* tło */
 .home-container::before {
     content: "";
     position: absolute;
@@ -18,24 +18,105 @@
     background-image: url("../../assets/images/home_rose.jpg");
     background-size: cover;
     background-position: center;
-    filter: brightness(0.9) blur(3px); /* delikatne rozmycie i przyciemnienie */
-    opacity: 0.35; /* półprzezroczystość */
+    filter: brightness(0.9) blur(3px);
+    opacity: 0.4;
     z-index: 0;
 }
 
-/* zawartość na wierzchu */
+/* główna karta */
 .home-card {
     position: relative;
     z-index: 1;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(165, 124, 101, 0.15);
-    padding: 60px 80px;
+    box-shadow: 0 8px 24px rgba(165, 124, 101, 0.2);
+    padding: 50px 70px;
     text-align: center;
-    backdrop-filter: blur(5px); /* efekt szkła (glassmorphism) */
+    backdrop-filter: blur(8px);
     transition: transform 0.3s ease;
 }
 
-.home-card:hover {
-    transform: translateY(-4px);
+.home-title {
+    color: #6b3e2e;
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+.home-subtitle {
+    color: #7b5c45;
+    font-size: 1rem;
+    margin-bottom: 25px;
+}
+
+.login-form,
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 260px;
+    margin: 0 auto;
+}
+
+.login-form input,
+.register-form input {
+    padding: 10px;
+    border: 1px solid #c7b5a1;
+    border-radius: 5px;
+}
+
+.login-form button,
+.register-form button,
+.toggle-register-btn {
+    background-color: #7b5c45;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-form button:hover,
+.register-form button:hover,
+.toggle-register-btn:hover {
+    background-color: #6b4229;
+}
+
+.toggle-register-btn {
+    margin-top: 20px;
+    background: none;
+    border: 1px solid #7b5c45;
+    color: #7b5c45;
+}
+
+.register-form {
+    margin-top: 20px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.error {
+    color: red;
+    margin-top: 10px;
+}
+
+.register-message {
+    margin-top: 10px;
+    color: #6b3e2e;
+}
+
+.expired-message {
+    color: #b43b3b;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

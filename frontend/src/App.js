@@ -2,13 +2,14 @@
 import React from "react";
 import AppRouter from "./routes/AppRouter";
 import "./App.css";
+import SessionWatcher from "./components/SessionWatcher";
 
 function App() {
     return (
-        <div className="App">
+        <>
+            {/*<SessionWatcher />*/}
             <AppRouter />
-        </div>
+        </>
     );
 }
-
 export default App;

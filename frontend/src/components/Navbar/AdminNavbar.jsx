@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
+import { logout } from "../../services/authService"; // 🧩 import
 
 const AdminNavbar = () => {
     return (
@@ -14,7 +15,11 @@ const AdminNavbar = () => {
                 <Link to="/admin/manage-rules">Reguły</Link>
                 <Link to="/admin/reports">Raporty</Link>
                 <Link to="/admin/account">Konto</Link>
-                <Link to="/">Wyloguj</Link>
+
+                {/* 🔒 poprawione */}
+                <button className="logout-btn" onClick={logout}>
+                    Wyloguj
+                </button>
             </div>
         </nav>
     );

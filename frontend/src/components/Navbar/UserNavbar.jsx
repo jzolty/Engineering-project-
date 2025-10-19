@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
+import { logout } from "../../services/authService"; // 🧩 import funkcji logout
 
 const UserNavbar = () => {
     return (
@@ -13,7 +14,11 @@ const UserNavbar = () => {
                 <Link to="/user/recommendations">Rekomendacje</Link>
                 <Link to="/user/products">Produkty</Link>
                 <Link to="/user/account">Konto</Link>
-                <Link to="/">Wyloguj</Link>
+
+                {/* 🔒 zmienione */}
+                <button className="logout-btn" onClick={logout}>
+                    Wyloguj
+                </button>
             </div>
         </nav>
     );
