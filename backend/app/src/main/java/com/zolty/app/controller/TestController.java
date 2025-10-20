@@ -16,11 +16,11 @@ public class TestController {
 
     @GetMapping("/user")
     public String forUsers() {
-        return "Dostęp przyznany: USER lub ADMIN ✅";
+        return "Dostęp przyznany: USER lub ADMIN ";
     }
 
     @GetMapping("/admin")
     public String forAdmins() {
-        return "Dostęp przyznany: tylko ADMIN 👑";
+        return "Dostęp przyznany: tylko ADMIN ";
     }
 }

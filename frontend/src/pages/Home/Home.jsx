@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/authService";
 import api from "../../services/axiosConfig";
-
 import "./Home.css";
+
+const GOOGLE_AUTH_URL = "http://localhost:8080/oauth2/authorization/google";
 
 const Home = () => {
     const [email, setEmail] = useState("");
@@ -20,7 +21,6 @@ const Home = () => {
 
     const navigate = useNavigate();
 
-    // sprawdzenie czy poprzednia sesja wygasła
     useEffect(() => {
         if (localStorage.getItem("sessionExpired")) {
             setSessionExpired(true);
@@ -28,7 +28,6 @@ const Home = () => {
         }
     }, []);
 
-    // logowanie
     const handleLogin = async (e) => {
         e.preventDefault();
         const result = await login(email, password);
@@ -40,7 +39,6 @@ const Home = () => {
         }
     };
 
-    // rejestracja
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
@@ -51,8 +49,6 @@ const Home = () => {
                     headers: { "Content-Type": "application/json" },
                 }
             );
-
-
             setRegisterMessage("Rejestracja zakończona pomyślnie!");
             setTimeout(() => {
                 setShowRegister(false);
@@ -93,6 +89,19 @@ const Home = () => {
                     <button type="submit">Zaloguj się</button>
                 </form>
 
+                {/* Przycisk logowania przez Google */}
+                <button
+                    className="google-login-btn"
+                    onClick={() => (window.location.href = GOOGLE_AUTH_URL)}
+                >
+                    <img
+                        src="https://developers.google.com/identity/images/g-logo.png"
+                        alt="Google"
+                        className="google-icon"
+                    />
+                    Zaloguj przez Google
+                </button>
+
                 {error && <p className="error">{error}</p>}
 
                 {/* Przycisk rozwijający rejestrację */}
@@ -103,7 +112,7 @@ const Home = () => {
                     {showRegister ? "← Wróć do logowania" : "Zarejestruj się"}
                 </button>
 
-                {/* Formularz rejestracji (ukryty/rozwijany) */}
+                {/* Formularz rejestracji */}
                 {showRegister && (
                     <form onSubmit={handleRegister} className="register-form">
                         <input

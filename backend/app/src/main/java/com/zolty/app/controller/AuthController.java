@@ -13,6 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import javax.crypto.SecretKey;
 import java.util.Map;
@@ -83,6 +87,32 @@ public class AuthController {
     public ResponseEntity<String> testCors() {
         return ResponseEntity.ok("CORS działa!");
     }
+
+    @GetMapping("/oauth2/redirect")
+    public void oauth2Redirect(@AuthenticationPrincipal OAuth2User oauthUser, HttpServletResponse response) throws IOException {
+        String email = oauthUser.getAttribute("email");
+        String name = oauthUser.getAttribute("name");
+
+        User user = userRepository.findByEmail(email)
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setEmail(email);
+                    newUser.setUsername(name);
+                    newUser.setProvider("google");
+                    newUser.setRole("USER");
+                    return userRepository.save(newUser);
+                });
+
+        String token = authService.generateToken(user);
+
+        String redirectUrl = "http://localhost:3000/oauth2/success?token=" + token + "&role=" + user.getRole();
+        System.out.println("Redirect URL: " + redirectUrl); // <-- tu patrzymy w logi
+        response.sendRedirect(redirectUrl);
+    }
+
+
+
+
 
 }
 

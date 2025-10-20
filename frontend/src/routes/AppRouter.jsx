@@ -18,17 +18,24 @@ import Products from "../pages/User/Products";
 import ProductDetails from "../pages/User/ProductDetails";
 import Recommendations from "../pages/User/Recommendations";
 import Account from "../pages/User/Account";
+import OAuth2RedirectHandler from "../pages/OAuth2RedirectHandler";
 
 import NotFound from "../pages/NotFound";
 
 const AppRouter = () => {
     return (
         <Router>
-            <Routes>
-                {/* Strona startowa (logowanie) */}
-                <Route path="/" element={<Home />} />
 
-                {/* ADMIN — tylko ADMIN */}
+                <Routes>
+                    {/* Strona startowa (logowanie) */}
+                    <Route path="/" element={<Home />} />
+
+                    {/* Google OAuth — przekierowanie po logowaniu */}
+                    <Route path="/oauth2/success" element={<OAuth2RedirectHandler />} />
+
+
+
+                    {/* ADMIN — tylko ADMIN */}
                 <Route
                     path="/admin"
                     element={

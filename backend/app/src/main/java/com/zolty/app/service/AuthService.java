@@ -38,6 +38,16 @@ public class AuthService {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Użytkownik o tym e-mailu już istnieje");
         }
+        if (request.getPassword().trim().length() < 6) {
+            throw new IllegalArgumentException("Hasło musi mieć co najmniej 6 znaków");
+        }
+        if (request.getPassword().contains(" ")) {
+            throw new IllegalArgumentException("Hasło nie może zawierać spacji");
+        }
+        if (!request.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new IllegalArgumentException("Niepoprawny format adresu e-mail");
+        }
+
 
         User user = new User();
         user.setEmail(request.getEmail());
@@ -68,15 +78,16 @@ public class AuthService {
     }
 
 
-    private String generateToken(User user) {
+    public String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("role", user.getRole())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1000ms * 60s * 60m = 1 godzina
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(SECRET_KEY)
                 .compact();
     }
+
 
     // metoda pomocnicza do weryfikacji tokena
     public String validateTokenAndGetEmail(String token) {
