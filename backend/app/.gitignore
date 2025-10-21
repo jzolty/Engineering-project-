@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# ignore configuration with secrets
+backend/app/src/main/resources/application.properties
