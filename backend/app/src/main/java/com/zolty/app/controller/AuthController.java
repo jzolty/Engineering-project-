@@ -92,14 +92,27 @@ public class AuthController {
     public void oauth2Redirect(@AuthenticationPrincipal OAuth2User oauthUser, HttpServletResponse response) throws IOException {
         String email = oauthUser.getAttribute("email");
         String name = oauthUser.getAttribute("name");
+        String providerId = oauthUser.getAttribute("sub");
+
 
         User user = userRepository.findByEmail(email)
+                .map(existingUser -> {
+                    // Jeśli istnieje, ale nie ma provider_id — zaktualizuj
+                    if (existingUser.getProviderId() == null && providerId != null) {
+                        existingUser.setProviderId(providerId);
+                        userRepository.save(existingUser);
+                        System.out.println("Zaktualizowano provider_id dla istniejącego użytkownika: " + email);
+                    }
+                    return existingUser;
+                })
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setEmail(email);
                     newUser.setUsername(name);
                     newUser.setProvider("google");
                     newUser.setRole("USER");
+                    newUser.setProviderId(providerId);
+
                     return userRepository.save(newUser);
                 });
 

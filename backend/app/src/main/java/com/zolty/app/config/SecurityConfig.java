@@ -34,7 +34,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("http://localhost:3000/oauth2/success", true)
+                        .defaultSuccessUrl("/api/auth/oauth2/redirect", true)
                 );
 
         return http.build();
