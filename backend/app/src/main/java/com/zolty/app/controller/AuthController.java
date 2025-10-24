@@ -5,8 +5,10 @@ import com.zolty.app.dto.LoginRequest;
 import com.zolty.app.dto.RegisterRequest;
 import com.zolty.app.dto.UserResponse;
 import com.zolty.app.model.User;
+import com.zolty.app.model.Role;
 import com.zolty.app.repository.UserRepository;
 import com.zolty.app.service.AuthService;
+import com.zolty.app.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +29,16 @@ import java.util.Map;
 
 public class AuthController {
 
-    private final AuthService authService;      // brakowało tego pola
-    private final UserRepository userRepository;
-    private final SecretKey secretKey;
+    AuthService authService;      // brakowało tego pola
+    UserRepository userRepository;
+    UserMapper userMapper;
+    SecretKey secretKey;
 
     // Wstrzyknięcie AuthService do konstruktora
-    public AuthController(AuthService authService, UserRepository userRepository, SecretKey secretKey) {
+    public AuthController(AuthService authService, UserRepository userRepository, UserMapper userMapper,SecretKey secretKey) {
         this.authService = authService;
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
         this.secretKey = secretKey;
     }
 
@@ -69,18 +73,7 @@ public class AuthController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Użytkownik nie znaleziony"));
 
-        UserResponse userResponse = new UserResponse(
-                user.getId(),
-                user.getEmail(),
-                user.getUsername(),
-                user.getRole(),
-                user.getProvider(),
-                user.getProviderId(),
-                user.getCreatedAt(),
-                user.getUpdatedAt()
-        );
-
-        return ResponseEntity.ok(userResponse);
+        return ResponseEntity.ok(userMapper.toUserResponse(user));
     }
 
     @GetMapping("/api/test/cors")
@@ -110,7 +103,7 @@ public class AuthController {
                     newUser.setEmail(email);
                     newUser.setUsername(name);
                     newUser.setProvider("google");
-                    newUser.setRole("USER");
+                    newUser.setRole(Role.USER);
                     newUser.setProviderId(providerId);
 
                     return userRepository.save(newUser);

@@ -1,5 +1,6 @@
 package com.zolty.app;
 
+import com.zolty.app.model.Role;
 import com.zolty.app.model.User;
 import com.zolty.app.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -28,8 +29,8 @@ public class TestDataInitializer {
                 User admin = new User();
                 admin.setEmail("admin@skincare.pl");
                 admin.setUsername("Admin");
-                admin.setPasswordHash(passwordEncoder.encode("admin123"));
-                admin.setRole("ADMIN");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRole(Role.ADMIN);
                 admin.setProvider("local");
                 userRepository.save(admin);
                 System.out.println("Stworzono konto ADMIN (admin@skincare.pl / admin123)");
@@ -39,8 +40,8 @@ public class TestDataInitializer {
                 User user = new User();
                 user.setEmail("user@skincare.pl");
                 user.setUsername("TestUser");
-                user.setPasswordHash(passwordEncoder.encode("user123"));
-                user.setRole("USER");
+                user.setPassword(passwordEncoder.encode("user123"));
+                user.setRole(Role.USER);
                 user.setProvider("local");
                 userRepository.save(user);
                 System.out.println("Stworzono konto USER (user@skincare.pl / user123)");
@@ -52,8 +53,8 @@ public class TestDataInitializer {
     @PostConstruct
     public void fixPasswords() {
         userRepository.findAll().forEach(user -> {
-            if (user.getPasswordHash() != null && !user.getPasswordHash().startsWith("$2a$")) {
-                user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+            if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
                 userRepository.save(user);
             }
         });
