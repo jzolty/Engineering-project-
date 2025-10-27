@@ -14,10 +14,10 @@ public class IngredientMapper {
         return ingredient;
     }
 
-    public IngredientResponse toDto(Ingredient entity) {
-        return IngredientResponse.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .build();
+    public IngredientResponse toDto(Ingredient ingredient) {
+        IngredientResponse response = new IngredientResponse();
+        response.setId(ingredient.getId());
+        response.setName(ingredient.getName());
+        return response;
     }
 }

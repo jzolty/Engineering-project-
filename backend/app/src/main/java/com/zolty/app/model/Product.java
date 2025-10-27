@@ -22,7 +22,9 @@ public class Product {
     private String name;
 
     private String brand;
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
     private String skinType;
     private String description;
     private String targetSex;

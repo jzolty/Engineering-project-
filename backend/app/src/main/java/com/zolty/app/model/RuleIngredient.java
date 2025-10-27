@@ -6,6 +6,13 @@ import lombok.*;
 import java.io.Serializable;
 
 @Entity
+
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"ingredient_a_id", "ingredient_b_id"})
+        }
+) // żeby nie zapisywać dwóch relacji z tą samą parą składników
+
 @Data
 @Builder
 @NoArgsConstructor

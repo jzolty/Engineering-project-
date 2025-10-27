@@ -2,17 +2,16 @@ package com.zolty.app.service;
 
 import com.zolty.app.dto.ProductRequest;
 import com.zolty.app.dto.ProductResponse;
+
+import com.zolty.app.exception.ResourceNotFoundException;
 import com.zolty.app.mapper.ProductMapper;
 import com.zolty.app.model.*;
 import com.zolty.app.repository.*;
-import com.zolty.app.exception.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,63 +21,131 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final IngredientRepository ingredientRepository;
     private final GoalRepository goalRepository;
+    private final ProductIngredientRepository productIngredientRepository;
+    private final ProductGoalRepository productGoalRepository;
     private final ProductMapper productMapper;
 
     @Transactional
     public ProductResponse addProduct(ProductRequest request) {
-        Product product = Product.builder()
-                .name(request.getName())
-                .brand(request.getBrand())
-                .category(request.getCategory())
-                .skinType(request.getSkinType())
-                .description(request.getDescription())
-                .targetSex(request.getTargetSex())
-                .targetAgeGroup(request.getTargetAgeGroup())
-                .isVegan(request.getIsVegan())
-                .isCrueltyFree(request.getIsCrueltyFree())
-                .isEcoCertified(request.getIsEcoCertified())
-                .notRecommendedDuringPregnancy(request.getNotRecommendedDuringPregnancy())
-                .useTime(request.getUseTime())
-                .build();
-
-        Set<ProductIngredient> productIngredients = new HashSet<>();
-        for (String ingredientName : request.getIngredients()) {
-            Ingredient ingredient = ingredientRepository.findAll().stream()
-                    .filter(i -> i.getName().equalsIgnoreCase(ingredientName))
-                    .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found: " + ingredientName));
-
-            ProductIngredient rel = new ProductIngredient();
-            rel.setProduct(product);
-            rel.setIngredient(ingredient);
-            rel.setId(new ProductIngredientId(product.getId(), ingredient.getId()));
-            productIngredients.add(rel);
-        }
-
-        Set<ProductGoal> productGoals = new HashSet<>();
-        for (String goalName : request.getGoals()) {
-            Goal goal = goalRepository.findAll().stream()
-                    .filter(g -> g.getName().equalsIgnoreCase(goalName))
-                    .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("Goal not found: " + goalName));
-
-            ProductGoal rel = new ProductGoal();
-            rel.setProduct(product);
-            rel.setGoal(goal);
-            rel.setId(new ProductGoalId(product.getId(), goal.getId()));
-            productGoals.add(rel);
-        }
-
-        product.setProductIngredients(productIngredients);
-        product.setProductGoals(productGoals);
-
+        // utwórz obiekt z mappera (ustawia m.in. kategorię jako enum)
+        Product product = productMapper.toEntity(request);
         productRepository.save(product);
+
+        //  powiązanie składników
+        if (request.getIngredientIds() != null) {
+            for (Long ingredientId : request.getIngredientIds()) {
+                Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found: " + ingredientId));
+                ProductIngredient relation = new ProductIngredient(
+                        new ProductIngredientId(product.getId(), ingredient.getId()),
+                        product,
+                        ingredient
+                );
+                productIngredientRepository.save(relation);
+            }
+        }
+
+        //  powiązanie celów
+        if (request.getGoalIds() != null) {
+            for (Long goalId : request.getGoalIds()) {
+                Goal goal = goalRepository.findById(goalId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Goal not found: " + goalId));
+                ProductGoal relation = new ProductGoal(
+                        new ProductGoalId(product.getId(), goal.getId()),
+                        product,
+                        goal
+                );
+                productGoalRepository.save(relation);
+            }
+        }
+        product = productRepository.findById(product.getId()).orElseThrow();
         return productMapper.toDto(product);
     }
 
     public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll().stream()
+        return productRepository.findAll()
+                .stream()
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+
+        // usuń powiązania (żeby nie złamać kluczy obcych)
+        productIngredientRepository.deleteByProductId(product.getId());
+        productGoalRepository.deleteByProductId(product.getId());
+
+        productRepository.delete(product);
+    }
+
+    @Transactional
+    public ProductResponse getProductById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+        return productMapper.toDto(product);
+    }
+
+    @Transactional
+    public ProductResponse updateProduct(Long id, ProductRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+
+        // 🔹 aktualizujemy pola produktu
+        product.setName(request.getName());
+        product.setBrand(request.getBrand());
+        //product.setCategory(request.getCategory());
+        //STRING->ENUM
+        try {
+            product.setCategory(Category.valueOf(request.getCategory().toUpperCase()));
+        } catch (IllegalArgumentException | NullPointerException e) {
+            product.setCategory(Category.OTHER);
+        }
+
+        product.setDescription(request.getDescription());
+        product.setSkinType(request.getSkinType());
+        product.setTargetSex(request.getTargetSex());
+        product.setTargetAgeGroup(request.getTargetAgeGroup());
+        product.setIsVegan(request.getIsVegan());
+        product.setIsCrueltyFree(request.getIsCrueltyFree());
+        product.setIsEcoCertified(request.getIsEcoCertified());
+        product.setUseTime(request.getUseTime());
+        product.setNotRecommendedDuringPregnancy(request.getNotRecommendedDuringPregnancy());
+
+        // 🔹 jeśli chcesz aktualizować składniki i cele (opcjonalnie)
+        if (request.getIngredientIds() != null) {
+            productIngredientRepository.deleteByProductId(product.getId());
+            for (Long ingredientId : request.getIngredientIds()) {
+                Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found: " + ingredientId));
+                ProductIngredient relation = new ProductIngredient(
+                        new ProductIngredientId(product.getId(), ingredient.getId()),
+                        product,
+                        ingredient
+                );
+                productIngredientRepository.save(relation);
+            }
+        }
+
+        if (request.getGoalIds() != null) {
+            productGoalRepository.deleteByProductId(product.getId());
+            for (Long goalId : request.getGoalIds()) {
+                Goal goal = goalRepository.findById(goalId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Goal not found: " + goalId));
+                ProductGoal relation = new ProductGoal(
+                        new ProductGoalId(product.getId(), goal.getId()),
+                        product,
+                        goal
+                );
+                productGoalRepository.save(relation);
+            }
+        }
+
+        productRepository.save(product);
+        product = productRepository.findById(product.getId()).orElseThrow();
+        return productMapper.toDto(product);
+    }
+
 }

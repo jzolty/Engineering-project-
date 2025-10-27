@@ -5,6 +5,8 @@ import com.zolty.app.dto.RuleResponse;
 import com.zolty.app.mapper.RuleMapper;
 import com.zolty.app.model.*;
 import com.zolty.app.repository.*;
+import com.zolty.app.exception.ConflictException;
+import com.zolty.app.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,12 @@ public class RuleService {
         Ingredient ingredientB = ingredientRepository.findById(request.getIngredientBId())
                 .orElseThrow(() -> new RuntimeException("Ingredient B not found"));
 
+
+        //sprawdzanie duplikatu
+        boolean exists = ruleIngredientRepository.existsByIngredientAAndIngredientB(ingredientA, ingredientB);
+        if (exists) {
+            throw new ConflictException("Rule for these ingredients already exists");
+        }
         // Utwórz nową regułę
         Rule rule = Rule.builder()
                 .ruleType(request.getRuleType())
@@ -59,4 +67,27 @@ public class RuleService {
                 .map(ruleMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+
+    @Transactional
+    public void deleteRule(Long id) {
+        Rule rule = ruleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rule not found with id: " + id));
+
+        ruleRepository.delete(rule);
+    }
+
+    @Transactional
+    public RuleResponse updateRule(Long id, RuleRequest request) {
+        Rule rule = ruleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rule not found with id: " + id));
+
+        rule.setRuleType(request.getRuleType());
+        rule.setPoints(request.getPoints());
+
+        ruleRepository.save(rule);
+        return ruleMapper.toDto(rule);
+    }
+
+
 }

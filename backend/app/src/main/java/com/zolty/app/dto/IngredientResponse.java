@@ -1,9 +1,12 @@
 package com.zolty.app.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class IngredientResponse {
     private Long id;

@@ -14,10 +14,10 @@ public class GoalMapper {
         return goal;
     }
 
-    public GoalResponse toDto(Goal entity) {
-        return GoalResponse.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .build();
+    public GoalResponse toDto(Goal goal) {
+        GoalResponse response = new GoalResponse();
+        response.setId(goal.getId());
+        response.setName(goal.getName());
+        return response;
     }
 }

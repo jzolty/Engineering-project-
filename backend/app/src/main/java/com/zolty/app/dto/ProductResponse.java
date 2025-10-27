@@ -2,11 +2,14 @@ package com.zolty.app.dto;
 
 import com.zolty.app.model.UseTime;
 import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ProductResponse {
     private Long id;
