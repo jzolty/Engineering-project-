@@ -1,10 +1,10 @@
 package com.zolty.app.dto;
 
-import com.zolty.app.model.UseTime;
 import lombok.Builder;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,8 +16,13 @@ public class ProductResponse {
     private String name;
     private String brand;
     private String category;
-    private String skinType;
+
+
+    private List<String> skinTypes;
+
     private String description;
+
+
     private String targetSex;
     private String targetAgeGroup;
 
@@ -26,7 +31,7 @@ public class ProductResponse {
     private Boolean isEcoCertified;
     private Boolean notRecommendedDuringPregnancy;
 
-    private UseTime useTime;
+    private String useTime;
 
     private List<String> ingredients;
     private List<String> goals;

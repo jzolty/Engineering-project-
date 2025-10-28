@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,11 +94,11 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
 
-        // 🔹 aktualizujemy pola produktu
+        //  aktualizujemy pola produktu
         product.setName(request.getName());
         product.setBrand(request.getBrand());
-        //product.setCategory(request.getCategory());
-        //STRING->ENUM
+
+        //  Kategoria (String → Enum)
         try {
             product.setCategory(Category.valueOf(request.getCategory().toUpperCase()));
         } catch (IllegalArgumentException | NullPointerException e) {
@@ -105,16 +106,57 @@ public class ProductService {
         }
 
         product.setDescription(request.getDescription());
-        product.setSkinType(request.getSkinType());
-        product.setTargetSex(request.getTargetSex());
-        product.setTargetAgeGroup(request.getTargetAgeGroup());
+
+        //  Typy skóry (Set<String> → Set<SkinType>)
+        //  Typy skóry (Set<String> → Set<SkinType>)
+        if (request.getSkinTypes() != null && !request.getSkinTypes().isEmpty()) {
+            Set<SkinType> skinTypeEnums = request.getSkinTypes().stream()
+                    .map(s -> {
+                        try {
+                            return SkinType.valueOf(s.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            throw new IllegalArgumentException("Invalid skin type value: " + s);
+                        }
+                    })
+                    .collect(Collectors.toSet());
+            product.setSkinTypes(skinTypeEnums);
+        }
+
+
+        // Płeć docelowa (String → Sex)
+        if (request.getTargetSex() != null) {
+            try {
+                product.setTargetSex(Sex.valueOf(request.getTargetSex().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid target sex value: " + request.getTargetSex());
+            }
+        }
+
+        // Grupa wiekowa (String → AgeGroup)
+        if (request.getTargetAgeGroup() != null) {
+            try {
+                product.setTargetAgeGroup(AgeGroup.valueOf(request.getTargetAgeGroup().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid target age group value: " + request.getTargetAgeGroup());
+            }
+        }
+
+        // Flagi logiczne
         product.setIsVegan(request.getIsVegan());
         product.setIsCrueltyFree(request.getIsCrueltyFree());
         product.setIsEcoCertified(request.getIsEcoCertified());
-        product.setUseTime(request.getUseTime());
         product.setNotRecommendedDuringPregnancy(request.getNotRecommendedDuringPregnancy());
 
-        // 🔹 jeśli chcesz aktualizować składniki i cele (opcjonalnie)
+        // Czas użycia (String → UseTime)
+        if (request.getUseTime() != null) {
+            try {
+                product.setUseTime(UseTime.valueOf(request.getUseTime().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid use time value: " + request.getUseTime());
+            }
+        }
+
+        // 🔹 Jeśli chcesz aktualizować składniki i cele (opcjonalnie)
         if (request.getIngredientIds() != null) {
             productIngredientRepository.deleteByProductId(product.getId());
             for (Long ingredientId : request.getIngredientIds()) {
@@ -143,9 +185,11 @@ public class ProductService {
             }
         }
 
+        // 🔹 Zapisz zmiany i zwróć wynik
         productRepository.save(product);
         product = productRepository.findById(product.getId()).orElseThrow();
         return productMapper.toDto(product);
     }
+
 
 }

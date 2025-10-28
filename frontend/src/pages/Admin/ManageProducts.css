@@ -1,102 +1,50 @@
-.manage-products-page {
-    background-color: #f8f5f2;
-    min-height: 100vh;
-}
-
-.manage-products-container {
-    padding: 60px 100px;
-}
-
-.header-section {
+.header-admin {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-}
-
-.header-section h2 {
-    color: #5b4636;
-    font-family: "Playfair Display", serif;
-    font-size: 1.8rem;
 }
 
 .add-btn {
-    background-color: #c89b8b;
-    color: #fff;
+    background-color: #7a5a38;
+    color: white;
     border: none;
-    padding: 10px 20px;
     border-radius: 8px;
-    font-weight: 500;
+    padding: 8px 14px;
     cursor: pointer;
-    transition: background-color 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .add-btn:hover {
-    background-color: #b38372;
-}
-
-.products-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-}
-
-.products-table th {
-    background-color: #faf4ef;
-    color: #5b4636;
-    padding: 14px;
-    text-align: left;
-    font-weight: 600;
-}
-
-.products-table td {
-    padding: 14px;
-    color: #7a6757;
-    border-top: 1px solid #f0e8e3;
+    background-color: #6a4b2f;
 }
 
 .actions {
     display: flex;
-    gap: 12px;
+    gap: 6px;
+    justify-content: center;
 }
 
-.edit-icon {
-    color: #a57c65;
+.edit-btn,
+.delete-btn {
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: color 0.2s;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 0.9rem;
 }
 
-.edit-icon:hover {
-    color: #5b4636;
+.edit-btn {
+    background-color: #c49a6c;
 }
 
-.delete-icon {
-    color: #c62828;
-    cursor: pointer;
-    transition: color 0.2s;
+.edit-btn:hover {
+    background-color: #b18455;
 }
 
-.delete-icon:hover {
-    color: #8b0000;
+.delete-btn {
+    background-color: #b74d4d;
 }
 
-.icon-true {
-    color: #2e7d32;
-    font-weight: bold;
-}
-
-.icon-false {
-    color: #c62828;
-    font-weight: bold;
-}
-
-.icon-unknown {
-    color: #b89b8c;
-    font-weight: bold;
+.delete-btn:hover {
+    background-color: #9d3b3b;
 }

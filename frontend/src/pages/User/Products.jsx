@@ -1,37 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar/UserNavbar";
+import productService from "../../services/productService";
 import "./Products.css";
 
 const Products = () => {
-    const products = [
-        {
-            id: 1,
-            name: "Krem nawilżający Hydro Boost",
-            brand: "Neutrogena",
-            category: "moisturizer",
-            target_sex: "female",
-            target_age_group: "adult",
-            is_vegan: true,
-            is_cruelty_free: "unknown",
-            is_eco_certified: false,
-            use_time: "morning",
-            not_recommended_during_pregnancy: false,
-        },
-        {
-            id: 2,
-            name: "Żel oczyszczający CeraVe",
-            brand: "CeraVe",
-            category: "cleanser",
-            target_sex: "any",
-            target_age_group: "adult",
-            is_vegan: false,
-            is_cruelty_free: true,
-            is_eco_certified: true,
-            use_time: "any",
-            not_recommended_during_pregnancy: false,
-        },
-    ];
-
+    const [products, setProducts] = useState([]);
     const [filters, setFilters] = useState({
         name: "",
         brand: "",
@@ -43,6 +16,33 @@ const Products = () => {
         is_eco_certified: "",
     });
 
+    // 🔹 Mapy tłumaczeń dla enumów
+    const sexLabels = {
+        FEMALE: "Kobieta",
+        MALE: "Mężczyzna",
+        ALL: "Unisex",
+    };
+
+    const useTimeLabels = {
+        MORNING: "Poranna",
+        EVENING: "Wieczorna",
+        ANY: "Dowolna",
+    };
+
+    // 🔹 Pobieranie produktów z backendu
+    useEffect(() => {
+        productService
+            .getAllProducts()
+            .then((response) => {
+                console.log("dane z backendu:", response.data);
+                setProducts(response.data);
+            })
+            .catch((error) => {
+                console.error("Błąd podczas pobierania produktów:", error);
+            });
+    }, []);
+
+    // 🔹 Obsługa filtrów
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({
@@ -51,6 +51,7 @@ const Products = () => {
         }));
     };
 
+    // 🔹 Filtrowanie po stronie frontendu
     const filteredProducts = products.filter((p) => {
         return (
             (filters.name === "" ||
@@ -59,22 +60,24 @@ const Products = () => {
                 p.brand.toLowerCase().includes(filters.brand.toLowerCase())) &&
             (filters.category === "" ||
                 p.category.toLowerCase().includes(filters.category.toLowerCase())) &&
-            (filters.use_time === "" || p.use_time === filters.use_time) &&
-            (filters.target_sex === "" || p.target_sex === filters.target_sex) &&
+            (filters.use_time === "" ||
+                p.useTime === filters.use_time) &&
+            (filters.target_sex === "" ||
+                p.targetSex === filters.target_sex) &&
             (filters.is_vegan === "" ||
-                String(p.is_vegan) === String(filters.is_vegan)) &&
+                String(p.isVegan) === String(filters.is_vegan)) &&
             (filters.is_cruelty_free === "" ||
-                String(p.is_cruelty_free) === String(filters.is_cruelty_free)) &&
+                String(p.isCrueltyFree) === String(filters.is_cruelty_free)) &&
             (filters.is_eco_certified === "" ||
-                String(p.is_eco_certified) === String(filters.is_eco_certified))
+                String(p.isEcoCertified) === String(filters.is_eco_certified))
         );
     });
 
-    // Funkcja do renderowania ikony
+    // 🔹 Ikony logiczne
     const renderIcon = (value) => {
         if (value === true) return <span className="icon-true">✓</span>;
         if (value === false) return <span className="icon-false">✗</span>;
-        return <span className="icon-unknown">?</span>;
+        return <span className="icon-unknown">•</span>;
     };
 
     return (
@@ -116,9 +119,9 @@ const Products = () => {
                         onChange={handleFilterChange}
                     >
                         <option value="">Wszystkie</option>
-                        <option value="morning">Poranna</option>
-                        <option value="evening">Wieczorna</option>
-                        <option value="any">Dowolna</option>
+                        <option value="MORNING">Poranna</option>
+                        <option value="EVENING">Wieczorna</option>
+                        <option value="ANY">Dowolna</option>
                     </select>
 
                     <label>Dla kogo</label>
@@ -128,9 +131,9 @@ const Products = () => {
                         onChange={handleFilterChange}
                     >
                         <option value="">Wszystkie</option>
-                        <option value="female">Kobieta</option>
-                        <option value="male">Mężczyzna</option>
-                        <option value="any">Unisex</option>
+                        <option value="FEMALE">Kobieta</option>
+                        <option value="MALE">Mężczyzna</option>
+                        <option value="ALL">Unisex</option>
                     </select>
 
                     {/* Sekcja radiobuttonów */}
@@ -202,24 +205,19 @@ const Products = () => {
                             <tr key={p.id}>
                                 <td
                                     className="product-link"
-                                    onClick={() => window.location.href = `/products/${p.id}`}
+                                    onClick={() =>
+                                        (window.location.href = `/products/${p.id}`)
+                                    }
                                 >
                                     {p.name}
                                 </td>
-
                                 <td>{p.brand}</td>
                                 <td>{p.category}</td>
-                                <td>
-                                    {p.target_sex === "any"
-                                        ? "Unisex"
-                                        : p.target_sex === "female"
-                                            ? "Kobieta"
-                                            : "Mężczyzna"}
-                                </td>
-                                <td>{p.use_time}</td>
-                                <td>{renderIcon(p.is_vegan)}</td>
-                                <td>{renderIcon(p.is_cruelty_free)}</td>
-                                <td>{renderIcon(p.is_eco_certified)}</td>
+                                <td>{sexLabels[p.targetSex] || p.targetSex}</td>
+                                <td>{useTimeLabels[p.useTime] || p.useTime}</td>
+                                <td>{renderIcon(p.isVegan)}</td>
+                                <td>{renderIcon(p.isCrueltyFree)}</td>
+                                <td>{renderIcon(p.isEcoCertified)}</td>
                             </tr>
                         ))}
                         </tbody>

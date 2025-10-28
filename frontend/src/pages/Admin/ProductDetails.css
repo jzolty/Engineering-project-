@@ -1,0 +1,36 @@
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn {
+    background-color: #c49a6c;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.edit-btn:hover {
+    background-color: #b18455;
+}
+
+.delete-btn {
+    background-color: #b74d4d;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.delete-btn:hover {
+    background-color: #9d3b3b;
+}

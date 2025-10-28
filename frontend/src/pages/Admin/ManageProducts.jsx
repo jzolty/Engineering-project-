@@ -1,35 +1,11 @@
-import React, { useState } from "react";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
-import "../../assets/styles/Account.css";
+import React, { useState, useEffect } from "react";
+import Navbar from "../../components/Navbar/AdminNavbar";
+import productService from "../../services/productService";
+import { useNavigate } from "react-router-dom";
 import "./ManageProducts.css";
-import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 
 const ManageProducts = () => {
-    const products = [
-        {
-            id: 1,
-            name: "Krem nawilżający Hydro Boost",
-            brand: "Neutrogena",
-            category: "moisturizer",
-            target_sex: "female",
-            use_time: "morning",
-            is_vegan: true,
-            is_cruelty_free: "unknown",
-            is_eco_certified: false,
-        },
-        {
-            id: 2,
-            name: "Żel oczyszczający CeraVe",
-            brand: "CeraVe",
-            category: "cleanser",
-            target_sex: "any",
-            use_time: "any",
-            is_vegan: false,
-            is_cruelty_free: true,
-            is_eco_certified: true,
-        },
-    ];
-
+    const [products, setProducts] = useState([]);
     const [filters, setFilters] = useState({
         name: "",
         brand: "",
@@ -41,6 +17,36 @@ const ManageProducts = () => {
         is_eco_certified: "",
     });
 
+    const navigate = useNavigate();
+
+    // 🔹 Mapy tłumaczeń dla enumów
+    const sexLabels = {
+        FEMALE: "Kobieta",
+        MALE: "Mężczyzna",
+        ALL: "Unisex",
+    };
+
+    const useTimeLabels = {
+        MORNING: "Poranna",
+        EVENING: "Wieczorna",
+        ANY: "Dowolna",
+    };
+
+    // 🔹 Pobieranie produktów
+    useEffect(() => {
+        loadProducts();
+    }, []);
+
+    const loadProducts = async () => {
+        try {
+            const response = await productService.getAllProducts();
+            setProducts(response.data);
+        } catch (error) {
+            console.error("Błąd podczas pobierania produktów:", error);
+        }
+    };
+
+    // 🔹 Obsługa filtrów
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({
@@ -49,6 +55,7 @@ const ManageProducts = () => {
         }));
     };
 
+    // 🔹 Filtrowanie po stronie frontendu
     const filteredProducts = products.filter((p) => {
         return (
             (filters.name === "" ||
@@ -57,26 +64,38 @@ const ManageProducts = () => {
                 p.brand.toLowerCase().includes(filters.brand.toLowerCase())) &&
             (filters.category === "" ||
                 p.category.toLowerCase().includes(filters.category.toLowerCase())) &&
-            (filters.use_time === "" || p.use_time === filters.use_time) &&
-            (filters.target_sex === "" || p.target_sex === filters.target_sex) &&
-            (filters.is_vegan === "" ||
-                String(p.is_vegan) === String(filters.is_vegan)) &&
+            (filters.use_time === "" || p.useTime === filters.use_time) &&
+            (filters.target_sex === "" || p.targetSex === filters.target_sex) &&
+            (filters.is_vegan === "" || String(p.isVegan) === String(filters.is_vegan)) &&
             (filters.is_cruelty_free === "" ||
-                String(p.is_cruelty_free) === String(filters.is_cruelty_free)) &&
+                String(p.isCrueltyFree) === String(filters.is_cruelty_free)) &&
             (filters.is_eco_certified === "" ||
-                String(p.is_eco_certified) === String(filters.is_eco_certified))
+                String(p.isEcoCertified) === String(filters.is_eco_certified))
         );
     });
 
+    // 🔹 Ikony logiczne
     const renderIcon = (value) => {
         if (value === true) return <span className="icon-true">✓</span>;
         if (value === false) return <span className="icon-false">✗</span>;
-        return <span className="icon-unknown">?</span>;
+        return <span className="icon-unknown">•</span>;
+    };
+
+    // 🔹 CRUD
+    const handleDelete = async (id) => {
+        if (window.confirm("Czy na pewno chcesz usunąć ten produkt?")) {
+            try {
+                await productService.deleteProduct(id);
+                setProducts(products.filter((p) => p.id !== id));
+            } catch (error) {
+                console.error("Błąd przy usuwaniu produktu:", error);
+            }
+        }
     };
 
     return (
-        <div className="manage-products-page">
-            <AdminNavbar />
+        <div className="products-page">
+            <Navbar role="admin" />
 
             <div className="products-wrapper">
                 {/* Lewy panel filtrów */}
@@ -113,9 +132,9 @@ const ManageProducts = () => {
                         onChange={handleFilterChange}
                     >
                         <option value="">Wszystkie</option>
-                        <option value="morning">Poranna</option>
-                        <option value="evening">Wieczorna</option>
-                        <option value="any">Dowolna</option>
+                        <option value="MORNING">Poranna</option>
+                        <option value="EVENING">Wieczorna</option>
+                        <option value="ANY">Dowolna</option>
                     </select>
 
                     <label>Dla kogo</label>
@@ -125,9 +144,9 @@ const ManageProducts = () => {
                         onChange={handleFilterChange}
                     >
                         <option value="">Wszystkie</option>
-                        <option value="female">Kobieta</option>
-                        <option value="male">Mężczyzna</option>
-                        <option value="any">Unisex</option>
+                        <option value="FEMALE">Kobieta</option>
+                        <option value="MALE">Mężczyzna</option>
+                        <option value="ALL">Unisex</option>
                     </select>
 
                     {/* Sekcja radiobuttonów */}
@@ -178,15 +197,17 @@ const ManageProducts = () => {
 
                 {/* Prawa sekcja - tabela */}
                 <main className="products-content">
-                    <div className="header-section">
+                    <div className="header-admin">
                         <h1>Zarządzaj produktami</h1>
                         <button
                             className="add-btn"
-                            onClick={() => (window.location.href = "/admin/add-product")}
+                            onClick={() => navigate("/admin/products/add")}
                         >
-                            <FaPlus /> Dodaj produkt
+                            + Dodaj produkt
                         </button>
                     </div>
+
+                    <p>Filtruj, edytuj lub usuwaj produkty.</p>
 
                     <table className="products-table">
                         <thead>
@@ -205,23 +226,33 @@ const ManageProducts = () => {
                         <tbody>
                         {filteredProducts.map((p) => (
                             <tr key={p.id}>
-                                <td>{p.name}</td>
+                                <td
+                                    className="product-link"
+                                    onClick={() => navigate(`/admin/products/${p.id}`)}
+                                >
+                                    {p.name}
+                                </td>
+
                                 <td>{p.brand}</td>
                                 <td>{p.category}</td>
-                                <td>
-                                    {p.target_sex === "any"
-                                        ? "Unisex"
-                                        : p.target_sex === "female"
-                                            ? "Kobieta"
-                                            : "Mężczyzna"}
-                                </td>
-                                <td>{p.use_time}</td>
-                                <td>{renderIcon(p.is_vegan)}</td>
-                                <td>{renderIcon(p.is_cruelty_free)}</td>
-                                <td>{renderIcon(p.is_eco_certified)}</td>
+                                <td>{sexLabels[p.targetSex]}</td>
+                                <td>{useTimeLabels[p.useTime]}</td>
+                                <td>{renderIcon(p.isVegan)}</td>
+                                <td>{renderIcon(p.isCrueltyFree)}</td>
+                                <td>{renderIcon(p.isEcoCertified)}</td>
                                 <td className="actions">
-                                    <FaEdit className="edit-icon" title="Edytuj" />
-                                    <FaTrashAlt className="delete-icon" title="Usuń" />
+                                    <button
+                                        className="edit-btn"
+                                        onClick={() => navigate(`/admin/products/${p.id}/edit`)}
+                                    >
+                                    Edytuj
+                                    </button>
+                                    <button
+                                        className="delete-btn"
+                                        onClick={() => handleDelete(p.id)}
+                                    >
+                                    Usuń
+                                    </button>
                                 </td>
                             </tr>
                         ))}

@@ -5,6 +5,7 @@ const api = axios.create({
     headers: {
         "Content-Type": "application/json", // 🟢 DODAJ TO
     },
+    withCredentials: true,
 });
 
 api.interceptors.request.use(

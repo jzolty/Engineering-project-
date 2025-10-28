@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar/UserNavbar";
+import Navbar from "../../components/Navbar/AdminNavbar";
 import productService from "../../services/productService";
-import "./ProductDetails.css";
+import "./ProductDetails.css"; // używamy tego samego stylu co user
 
-const ProductDetails = () => {
+const AdminProductDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
@@ -47,10 +47,24 @@ const ProductDetails = () => {
             });
     }, [id]);
 
+    // 🔹 Usuwanie produktu
+    const handleDelete = async () => {
+        if (window.confirm("Czy na pewno chcesz usunąć ten produkt?")) {
+            try {
+                await productService.deleteProduct(id);
+                alert("Produkt został usunięty.");
+                navigate("/admin/products");
+            } catch (error) {
+                console.error("Błąd podczas usuwania produktu:", error);
+                alert("Nie udało się usunąć produktu.");
+            }
+        }
+    };
+
     if (loading) {
         return (
             <div className="product-details">
-                <Navbar role="user" />
+                <Navbar role="admin" />
                 <div className="product-details-container">
                     <p>Ładowanie produktu...</p>
                 </div>
@@ -61,7 +75,7 @@ const ProductDetails = () => {
     if (error || !product) {
         return (
             <div className="product-details">
-                <Navbar role="user" />
+                <Navbar role="admin" />
                 <div className="product-details-container">
                     <p>Nie znaleziono produktu.</p>
                     <button className="back-btn" onClick={() => navigate(-1)}>
@@ -74,11 +88,25 @@ const ProductDetails = () => {
 
     return (
         <div className="product-details">
-            <Navbar role="user" />
+            <Navbar role="admin" />
             <div className="product-details-container">
-                <button className="back-btn" onClick={() => navigate(-1)}>
-                    ← Wróć
-                </button>
+                <div className="details-header">
+                    <button className="back-btn" onClick={() => navigate(-1)}>
+                        ← Wróć
+                    </button>
+
+                    <div className="admin-actions">
+                        <button
+                            className="edit-btn"
+                            onClick={() => navigate(`/admin/products/${id}/edit`)}
+                        >
+                             Edytuj
+                        </button>
+                        <button className="delete-btn" onClick={handleDelete}>
+                             Usuń
+                        </button>
+                    </div>
+                </div>
 
                 <h1>{product.name}</h1>
                 <p className="brand">{product.brand}</p>
@@ -103,9 +131,7 @@ const ProductDetails = () => {
                         <strong>Eko:</strong> {renderIcon(product.isEcoCertified)}
                     </p>
                     {product.notRecommendedDuringPregnancy && (
-                        <p className="warning">
-                             Nie zalecany w okresie ciąży
-                        </p>
+                        <p className="warning">⚠️ Nie zalecany w okresie ciąży</p>
                     )}
                 </div>
 
@@ -115,15 +141,17 @@ const ProductDetails = () => {
                         <h3>Typy skóry</h3>
                         <ul>
                             {product.skinTypes.map((type, i) => (
-                                <li key={i}>{type === "DRY"
-                                    ? "Sucha"
-                                    : type === "SENSITIVE"
-                                        ? "Wrażliwa"
-                                        : type === "COMBINATION"
-                                            ? "Mieszana"
-                                            : type === "OILY"
-                                                ? "Tłusta"
-                                                : type}</li>
+                                <li key={i}>
+                                    {type === "DRY"
+                                        ? "Sucha"
+                                        : type === "SENSITIVE"
+                                            ? "Wrażliwa"
+                                            : type === "COMBINATION"
+                                                ? "Mieszana"
+                                                : type === "OILY"
+                                                    ? "Tłusta"
+                                                    : type}
+                                </li>
                             ))}
                         </ul>
                     </div>
@@ -153,4 +181,4 @@ const ProductDetails = () => {
     );
 };
 
-export default ProductDetails;
+export default AdminProductDetails;

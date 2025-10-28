@@ -1,10 +1,8 @@
 package com.zolty.app.dto;
 
-import com.zolty.app.model.UseTime;
 import lombok.*;
 import java.util.Set;
 import java.util.List;
-import com.zolty.app.model.Category;
 
 @Data
 @Getter
@@ -17,8 +15,12 @@ public class ProductRequest {
     private String brand;
     private String category;
 
-    private String skinType;
+
+    private Set<String> skinTypes;
+
     private String description;
+
+
     private String targetSex;
     private String targetAgeGroup;
 
@@ -27,11 +29,11 @@ public class ProductRequest {
     private Boolean isEcoCertified;
     private Boolean notRecommendedDuringPregnancy;
 
-    private UseTime useTime;
+    private String useTime;
 
-    private Set<String> ingredients; // nazwy składników
-    private Set<String> goals;       // nazwy celów
+
+    private Set<String> ingredients;
+    private Set<String> goals;
     private List<Long> ingredientIds;
     private List<Long> goalIds;
-
 }
