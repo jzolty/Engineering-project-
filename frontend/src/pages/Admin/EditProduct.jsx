@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/AdminNavbar";
 import Select from "react-select";
 import productService from "../../services/productService";
@@ -22,7 +22,8 @@ const translations = {
     NORMAL: "Normalna",
 };
 
-const AddProduct = () => {
+const EditProduct = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
@@ -52,43 +53,71 @@ const AddProduct = () => {
 
     const [ingredients, setIngredients] = useState([]);
     const [goals, setGoals] = useState([]);
-    const [newIngredient, setNewIngredient] = useState("");
-    const [newGoal, setNewGoal] = useState("");
+    const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
 
+    // 🔹 Pobierz dane produktu i enumy
     useEffect(() => {
-        Promise.all([
-            enumService.getCategories(),
-            enumService.getSkinTypes(),
-            enumService.getTargetSexes(),
-            enumService.getAgeGroups(),
-            enumService.getUseTimes(),
-            ingredientService.getAllIngredients(),
-            goalService.getAllGoals(),
-        ])
-            .then(
-                ([
-                     categories,
-                     skinTypes,
-                     targetSexes,
-                     ageGroups,
-                     useTimes,
-                     ingredientsRes,
-                     goalsRes,
-                 ]) => {
-                    setEnums({
-                        categories: categories.data,
-                        skinTypes: skinTypes.data,
-                        targetSexes: targetSexes.data,
-                        ageGroups: ageGroups.data,
-                        useTimes: useTimes.data,
-                    });
-                    setIngredients(ingredientsRes.data);
-                    setGoals(goalsRes.data);
-                }
-            )
-            .catch((err) => console.error("Błąd ładowania danych:", err));
-    }, []);
+        const loadData = async () => {
+            try {
+                const [
+                    productRes,
+                    categories,
+                    skinTypes,
+                    targetSexes,
+                    ageGroups,
+                    useTimes,
+                    ingredientsRes,
+                    goalsRes,
+                ] = await Promise.all([
+                    productService.getProductById(id),
+                    enumService.getCategories(),
+                    enumService.getSkinTypes(),
+                    enumService.getTargetSexes(),
+                    enumService.getAgeGroups(),
+                    enumService.getUseTimes(),
+                    ingredientService.getAllIngredients(),
+                    goalService.getAllGoals(),
+                ]);
+
+                const p = productRes.data;
+                setForm({
+                    name: p.name || "",
+                    brand: p.brand || "",
+                    category: p.category || "",
+                    skinTypes: p.skinTypes || [],
+                    description: p.description || "",
+                    targetSex: p.targetSex || "",
+                    targetAgeGroup: p.targetAgeGroup || "",
+                    isVegan: p.isVegan || false,
+                    isCrueltyFree: p.isCrueltyFree || false,
+                    isEcoCertified: p.isEcoCertified || false,
+                    notRecommendedDuringPregnancy: p.notRecommendedDuringPregnancy || false,
+                    useTime: p.useTime || "",
+                    ingredientIds: p.ingredients ? p.ingredients.map((_, idx) => idx + 1) : [],
+                    goalIds: p.goals ? p.goals.map((_, idx) => idx + 1) : [],
+                });
+
+                setEnums({
+                    categories: categories.data,
+                    skinTypes: skinTypes.data,
+                    targetSexes: targetSexes.data,
+                    ageGroups: ageGroups.data,
+                    useTimes: useTimes.data,
+                });
+
+                setIngredients(ingredientsRes.data);
+                setGoals(goalsRes.data);
+            } catch (err) {
+                console.error("Błąd ładowania danych produktu:", err);
+                alert("Nie udało się załadować danych produktu.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -98,53 +127,26 @@ const AddProduct = () => {
         }));
     };
 
-    const handleAddNew = async (type) => {
-        try {
-            if (type === "ingredient" && newIngredient.trim() !== "") {
-                const res = await ingredientService.addIngredient({ name: newIngredient });
-                setIngredients((prev) => [...prev, res.data]);
-                setNewIngredient("");
-            }
-            if (type === "goal" && newGoal.trim() !== "") {
-                const res = await goalService.addGoal({ name: newGoal });
-                setGoals((prev) => [...prev, res.data]);
-                setNewGoal("");
-            }
-        } catch (err) {
-            console.error("Błąd przy dodawaniu:", err);
-        }
-    };
-
-    const validateForm = () => {
-        const newErrors = {};
-        if (!form.name.trim()) newErrors.name = "Nazwa jest wymagana.";
-        if (!form.brand.trim()) newErrors.brand = "Marka jest wymagana.";
-        if (!form.category) newErrors.category = "Wybierz kategorię.";
-        if (!form.targetSex) newErrors.targetSex = "Wybierz płeć docelową.";
-        if (!form.useTime) newErrors.useTime = "Wybierz porę dnia.";
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) return;
 
         try {
-            await productService.addProduct(form);
-            alert("Produkt został dodany pomyślnie!");
+            await productService.updateProduct(id, form);
+            alert("Zmiany zostały zapisane pomyślnie!");
             navigate("/admin/manage-products");
         } catch (err) {
-            console.error("Błąd dodawania produktu:", err);
-            alert("Nie udało się dodać produktu.");
+            console.error("Błąd aktualizacji produktu:", err);
+            alert("Nie udało się zapisać zmian.");
         }
     };
+
+    if (loading) return <p style={{ textAlign: "center" }}>Ładowanie danych...</p>;
 
     return (
         <div className="add-edit-product">
             <Navbar role="admin" />
             <div className="form-container">
-                <h1>Dodaj nowy produkt</h1>
+                <h1>Edytuj produkt</h1>
 
                 <form onSubmit={handleSubmit} className="product-form">
                     <label>Nazwa *</label>
@@ -154,7 +156,6 @@ const AddProduct = () => {
                         value={form.name}
                         onChange={handleChange}
                     />
-                    {errors.name && <p className="error">{errors.name}</p>}
 
                     <label>Marka *</label>
                     <input
@@ -163,7 +164,6 @@ const AddProduct = () => {
                         value={form.brand}
                         onChange={handleChange}
                     />
-                    {errors.brand && <p className="error">{errors.brand}</p>}
 
                     <label>Kategoria *</label>
                     <select
@@ -178,7 +178,6 @@ const AddProduct = () => {
                             </option>
                         ))}
                     </select>
-                    {errors.category && <p className="error">{errors.category}</p>}
 
                     <label>Typy skóry</label>
                     <Select
@@ -222,7 +221,6 @@ const AddProduct = () => {
                             </option>
                         ))}
                     </select>
-                    {errors.targetSex && <p className="error">{errors.targetSex}</p>}
 
                     <label>Grupa wiekowa</label>
                     <select
@@ -251,7 +249,6 @@ const AddProduct = () => {
                             </option>
                         ))}
                     </select>
-                    {errors.useTime && <p className="error">{errors.useTime}</p>}
 
                     <div className="checkbox-group">
                         <label>
@@ -314,18 +311,6 @@ const AddProduct = () => {
                         classNamePrefix="select"
                     />
 
-                    <div className="add-inline">
-                        <input
-                            type="text"
-                            value={newIngredient}
-                            onChange={(e) => setNewIngredient(e.target.value)}
-                            placeholder="Nowy składnik"
-                        />
-                        <button type="button" onClick={() => handleAddNew("ingredient")}>
-                            + Dodaj składnik
-                        </button>
-                    </div>
-
                     <h3>Efekty działania (Goals)</h3>
                     <Select
                         isMulti
@@ -348,20 +333,8 @@ const AddProduct = () => {
                         classNamePrefix="select"
                     />
 
-                    <div className="add-inline">
-                        <input
-                            type="text"
-                            value={newGoal}
-                            onChange={(e) => setNewGoal(e.target.value)}
-                            placeholder="Nowy cel"
-                        />
-                        <button type="button" onClick={() => handleAddNew("goal")}>
-                            + Dodaj cel
-                        </button>
-                    </div>
-
                     <button type="submit" className="save-btn">
-                        Zapisz produkt
+                        Zapisz zmiany
                     </button>
                 </form>
             </div>
@@ -369,4 +342,4 @@ const AddProduct = () => {
     );
 };
 
-export default AddProduct;
+export default EditProduct;

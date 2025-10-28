@@ -12,6 +12,9 @@ import AddProduct from "../pages/Admin/AddProduct";
 import UserList from "../pages/Admin/UserList";
 import AdminProductDetails from "../pages/Admin/AdminProductDetails";
 
+import EditProduct from "../pages/Admin/EditProduct";
+
+
 
 import UserDashboard from "../pages/User/UserDashboard";
 import SkinAnalysis from "../pages/User/SkinAnalysis";
@@ -89,13 +92,30 @@ const AppRouter = () => {
                     }
                 />
                 <Route
-                    path="/admin/add-product"
+                    path="/admin/products/add"
                     element={
                         <PrivateRoute allowedRoles={["ADMIN"]}>
                             <AddProduct />
                         </PrivateRoute>
                     }
                 />
+                    <Route
+                        path="/admin/products/:id/edit"
+                        element={
+                            <PrivateRoute allowedRoles={["ADMIN"]}>
+                                <EditProduct />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/admin/products/:id"
+                        element={
+                            <PrivateRoute allowedRoles={["ADMIN"]}>
+                                <AdminProductDetails />
+                            </PrivateRoute>
+                        }
+                    />
 
                 {/* USER — dla USER i ADMIN */}
                 <Route

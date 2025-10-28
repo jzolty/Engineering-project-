@@ -1,0 +1,150 @@
+.add-edit-product {
+    background-color: #fffaf6;
+    min-height: 100vh;
+    color: #3b2d1f;
+}
+
+.form-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #f9f4ef;
+    border-radius: 16px;
+    padding: 30px 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-container h1 {
+    text-align: center;
+    color: #3b2d1f;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+.product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.product-form label {
+    font-weight: 600;
+    color: #4a3725;
+    margin-bottom: 4px;
+}
+
+.product-form input[type="text"],
+.product-form select,
+.product-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d4c3b3;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #fff;
+    color: #3b2d1f;
+}
+
+.product-form select[multiple],
+.product-form textarea {
+    min-height: 80px;
+}
+
+.product-form textarea {
+    resize: vertical;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.add-inline {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.add-inline input {
+    flex: 1;
+}
+
+.add-inline button {
+    background-color: #7a5a38;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.add-inline button:hover {
+    background-color: #6a4b2f;
+}
+
+.save-btn {
+    background-color: #7a5a38;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s ease;
+}
+
+.save-btn:hover {
+    background-color: #6a4b2f;
+}
+
+.error {
+    color: #b74d4d;
+    font-size: 0.85rem;
+    margin-top: -8px;
+    margin-bottom: 6px;
+}
+
+h3 {
+    color: #3b2d1f;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+.custom-select {
+    margin-top: 6px;
+}
+
+.select__control {
+    border-radius: 8px !important;
+    border-color: #d4c3b3 !important;
+    min-height: 42px;
+    background: #fffaf6 !important;
+    box-shadow: none !important;
+}
+
+.select__multi-value {
+    background-color: #e5d5c2 !important;
+    border-radius: 6px;
+}
+
+.select__option--is-focused {
+    background-color: #f0e4d3 !important;
+}
+
+.select__option--is-selected {
+    background-color: #c7a878 !important;
+    color: white !important;
+}
+
+.select__placeholder {
+    color: #6d5640 !important;
+}
