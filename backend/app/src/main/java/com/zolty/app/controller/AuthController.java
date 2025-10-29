@@ -12,6 +12,7 @@ import com.zolty.app.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -21,6 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import javax.crypto.SecretKey;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -119,6 +121,58 @@ public class AuthController {
 
 
 
+    @PutMapping("/update-email")
+    public ResponseEntity<UserResponse> updateEmail(HttpServletRequest request, @RequestParam String newEmail) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String token = authHeader.substring(7);
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        String email = claims.getSubject();
+        UserResponse updatedUser = authService.updateEmail(email, newEmail);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @PutMapping("/update-username")
+    public ResponseEntity<UserResponse> updateUsername(HttpServletRequest request, @RequestParam String newUsername) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String token = authHeader.substring(7);
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        String email = claims.getSubject();
+        UserResponse updatedUser = authService.updateUsername(email, newUsername);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> users = authService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        authService.deleteUserById(id);
+        return ResponseEntity.ok("Użytkownik został usunięty.");
+    }
 
 }
 

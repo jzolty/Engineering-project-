@@ -18,7 +18,9 @@ public class Rule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String ruleType;
+    @Enumerated(EnumType.STRING)
+    private RuleType ruleType;
+
     private Integer points;
 
     @Builder.Default

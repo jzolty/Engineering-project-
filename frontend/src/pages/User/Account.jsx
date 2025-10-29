@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/UserNavbar";
-import { getCurrentUser } from "../../services/authService";
+import { getCurrentUser, updateEmail, updateUsername } from "../../services/authService";
 import "../../assets/styles/Account.css";
 
-const UserAccount = () => {
+const UserAccount = ({ role = "user" }) => {
     const [user, setUser] = useState({
         id: "",
         email: "",
@@ -15,68 +15,95 @@ const UserAccount = () => {
         updatedAt: "",
     });
     const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newEmail, setNewEmail] = useState("");
+    const [newUsername, setNewUsername] = useState("");
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         const fetchUser = async () => {
             const data = await getCurrentUser();
             if (data) {
-                setUser({
-                    id: data.id || "",
-                    email: data.email || "",
-                    username: data.username || "",
-                    role: data.role || "",
-                    provider: data.provider || "",
-                    providerId: data.providerId || "",
-                    createdAt: data.createdAt ? formatDate(data.createdAt) : "",
-                    updatedAt: data.updatedAt ? formatDate(data.updatedAt) : "",
-                });
+                setUser(data);
+                setNewEmail(data.email);
+                setNewUsername(data.username);
             }
             setLoading(false);
         };
         fetchUser();
     }, []);
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleString("pl-PL", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
+    const isGoogleUser = user.provider === "google";
+
+    const handleSave = async () => {
+        try {
+            let updated = false;
+
+            // Najpierw username (bo email wymaga potem ponownego logowania)
+            if (!isGoogleUser && newUsername !== user.username) {
+                await updateUsername(newUsername);
+                updated = true;
+            }
+
+            // Następnie e-mail (tylko jeśli nie Google)
+            if (!isGoogleUser && newEmail !== user.email) {
+                await updateEmail(newEmail);
+                updated = true;
+                alert("Adres e-mail został zmieniony. Zaloguj się ponownie, aby kontynuować.");
+                localStorage.clear();
+                window.location.href = "/";
+                return;
+            }
+
+            if (updated) {
+                setMessage("Dane zostały zaktualizowane!");
+                const refreshed = await getCurrentUser();
+                setUser(refreshed);
+            } else {
+                setMessage("Nie wprowadzono żadnych zmian.");
+            }
+
+            setIsEditing(false);
+        } catch (err) {
+            setMessage(` Błąd: ${err}`);
+        }
     };
 
-    if (loading) {
-        return <p>Ładowanie danych konta...</p>;
-    }
+    if (loading) return <p>Ładowanie danych konta...</p>;
 
     return (
         <div className="account-page">
-            <Navbar role="user" />
-
+            <Navbar role={role} />
             <div className="account-container">
                 <h2>Twoje konto</h2>
                 <p>Zarządzaj swoimi danymi i informacjami konta.</p>
+                {message && <p className="account-message">{message}</p>}
 
-                <form className="account-form">
-                    <label>ID użytkownika</label>
-                    <input type="text" value={user.id} readOnly />
-
+                <form className="account-form" onSubmit={(e) => e.preventDefault()}>
                     <label>Nazwa użytkownika</label>
-                    <input type="text" value={user.username} readOnly />
+                    <input
+                        type="text"
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value)}
+                        readOnly={!isEditing || isGoogleUser}
+                    />
 
                     <label>E-mail</label>
-                    <input type="email" value={user.email} readOnly />
+                    <input
+                        type="email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        readOnly={!isEditing || isGoogleUser}
+                    />
+
+                    {isGoogleUser && (
+                        <p style={{ color: "gray", fontStyle: "italic" }}>
+                             Konto Google – edycja danych jest niedostępna.
+                        </p>
+                    )}
 
                     <label>Rola</label>
                     <input type="text" value={user.role} readOnly />
-
-                    <label>Provider</label>
-                    <input type="text" value={user.provider} readOnly />
-
-                    <label>ID providera</label>
-                    <input type="text" value={user.providerId || "—"} readOnly />
 
                     <label>Data utworzenia konta</label>
                     <input type="text" value={user.createdAt} readOnly />
@@ -84,9 +111,11 @@ const UserAccount = () => {
                     <label>Ostatnia aktualizacja</label>
                     <input type="text" value={user.updatedAt} readOnly />
 
-                    <button type="button" disabled>
-                        Zapisz zmiany (wkrótce)
-                    </button>
+                    {isEditing ? (
+                        <button type="button" onClick={handleSave}> Zapisz zmiany</button>
+                    ) : (
+                        <button type="button" onClick={() => setIsEditing(true)}> Edytuj dane</button>
+                    )}
                 </form>
             </div>
         </div>

@@ -30,11 +30,17 @@ public class RuleService {
         Ingredient ingredientB = ingredientRepository.findById(request.getIngredientBId())
                 .orElseThrow(() -> new RuntimeException("Ingredient B not found"));
 
+        if (ingredientA.getId().equals(ingredientB.getId())) {
+            throw new ConflictException("Nie można dodać reguły dla tego samego składnika");
+        }
+
 
         //sprawdzanie duplikatu
-        boolean exists = ruleIngredientRepository.existsByIngredientAAndIngredientB(ingredientA, ingredientB);
+        boolean exists = ruleIngredientRepository.existsByIngredientAAndIngredientB(ingredientA, ingredientB)
+                || ruleIngredientRepository.existsByIngredientAAndIngredientB(ingredientB, ingredientA);
+
         if (exists) {
-            throw new ConflictException("Rule for these ingredients already exists");
+            throw new ConflictException("Taka reguła już istnieje (niezależnie od kolejności składników)");
         }
         // Utwórz nową regułę
         Rule rule = Rule.builder()

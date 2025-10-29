@@ -21,7 +21,7 @@ const AdminDashboard = () => {
                 <div className="dashboard-row">
                     <div className="dashboard-card" onClick={() => navigate("/admin/users")}>
                         <h3>Zarządzaj użytkownikami</h3>
-                        <p>Dodawaj, edytuj i usuwaj konta użytkowników.</p>
+                        <p>Przeglądaj i usuwaj konta użytkowników.</p>
                     </div>
 
                     <div className="dashboard-card" onClick={() => navigate("/admin/manage-products")}>
@@ -34,10 +34,7 @@ const AdminDashboard = () => {
                         <p>Określaj zależności między składnikami a typami skóry.</p>
                     </div>
 
-                    <div className="dashboard-card" onClick={() => navigate("/admin/reports")}>
-                        <h3>Raporty i podsumowania</h3>
-                        <p>Generuj raporty na podstawie danych systemowych.</p>
-                    </div>
+
                 </div>
             </div>
         </div>

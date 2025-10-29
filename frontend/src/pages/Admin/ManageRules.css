@@ -1,109 +1,87 @@
-.manage-rules-page {
-    background-color: #f8f5f2;
-    min-height: 100vh;
-}
-
 .manage-rules-container {
-    padding: 3rem 5rem;
+    background-color: #fffaf7;
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    margin: 30px auto;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
 }
 
 .header-section {
+    margin-bottom: 25px;
+}
+
+.add-rule-section {
+    background-color: #fdf3ed;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.add-rule-form {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 10px;
 }
 
-.header-section h2 {
-    color: #5b4636;
-    font-family: "Playfair Display", serif;
-}
-
-.add-btn {
-    background-color: #a57c65;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
+.add-rule-form select,
+.add-rule-form input {
+    padding: 10px;
     border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: 0.3s;
+    border: 1px solid #ddd;
+    background-color: #fff;
 }
 
-.add-btn:hover {
-    background-color: #8f6852;
+.rules-table-wrapper {
+    overflow-x: auto;
 }
 
-/* === TABELA === */
 .rules-table {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 15px;
+}
+
+.rules-table th,
+.rules-table td {
+    text-align: center;
+    padding: 12px;
 }
 
 .rules-table th {
-    background-color: #f7eee7;
-    color: #5b3a1d;
-    text-align: left;
-    padding: 0.9rem 1.2rem;
+    background-color: #fdf3ed;
+    color: #5a3e36;
     font-weight: 600;
 }
 
-.rules-table td {
-    padding: 0.9rem 1.2rem;
-    border-bottom: 1px solid #f0e4da;
-    color: #4a3a2d;
+.rules-table tr:nth-child(even) {
+    background-color: #fff5ee;
 }
 
-.rules-table tr:hover {
-    background-color: #faf5f1;
-}
-
-/* === INPUTY / SELECTY === */
-.rule-type-dropdown {
-    padding: 0.3rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #d8c5b4;
-    background-color: #fffaf7;
-    color: #5b3a1d;
-    font-size: 0.9rem;
-}
-
+.rule-type-dropdown,
 .points-input {
-    width: 70px;
-    text-align: center;
     border-radius: 6px;
-    border: 1px solid #d8c5b4;
-    background-color: #fffaf7;
-    color: #5b3a1d;
-}
-
-/* === AKCJE === */
-.actions {
-    display: flex;
-    gap: 10px;
-}
-
-.edit-icon {
-    color: #4a7c59;
-    cursor: pointer;
+    padding: 6px;
+    border: 1px solid #ddd;
+    background-color: #fff;
 }
 
 .delete-icon {
-    color: #c0392b;
+    color: #b34040;
     cursor: pointer;
-}
-
-.edit-icon:hover {
-    color: #2e573d;
+    font-size: 18px;
 }
 
 .delete-icon:hover {
-    color: #a5281b;
+    color: #ff4d4d;
+    transform: scale(1.1);
+}
+
+.manage-rules-message {
+    font-weight: bold;
+    color: #5a3e36;
+    margin-bottom: 10px;
 }

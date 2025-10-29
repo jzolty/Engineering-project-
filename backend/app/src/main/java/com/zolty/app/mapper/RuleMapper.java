@@ -13,10 +13,11 @@ public class RuleMapper {
 
         return RuleResponse.builder()
                 .id(rule.getId())
-                .ruleType(rule.getRuleType())
+                .ruleType(rule.getRuleType() != null ? rule.getRuleType().getDisplayName() : null)
                 .points(rule.getPoints())
                 .ingredientA(rel != null ? rel.getIngredientA().getName() : null)
                 .ingredientB(rel != null ? rel.getIngredientB().getName() : null)
                 .build();
     }
+
 }

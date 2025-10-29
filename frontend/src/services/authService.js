@@ -68,9 +68,36 @@ export const isTokenExpired = () => {
 // Automatyczne wylogowanie, jeśli token wygasł
 export const checkTokenExpiration = () => {
     if (isTokenExpired()) {
-        localStorage.setItem("sessionExpired", "true"); // 🔹 flaga do komunikatu
+        localStorage.setItem("sessionExpired", "true"); // flaga do komunikatu
         logout();
     }
 };
 
+// Aktualizacja e-maila
+export const updateEmail = async (newEmail) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await api.put(`/auth/update-email?newEmail=${newEmail}`, {}, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Błąd aktualizacji e-maila:", error);
+        throw error.response?.data?.message || "Nie udało się zaktualizować e-maila";
+    }
+};
+
+// Aktualizacja nazwy użytkownika
+export const updateUsername = async (newUsername) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await api.put(`/auth/update-username?newUsername=${newUsername}`, {}, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Błąd aktualizacji nazwy użytkownika:", error);
+        throw error.response?.data?.message || "Nie udało się zaktualizować nazwy użytkownika";
+    }
+};
 

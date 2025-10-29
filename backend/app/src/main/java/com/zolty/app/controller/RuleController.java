@@ -2,13 +2,16 @@ package com.zolty.app.controller;
 
 import com.zolty.app.dto.RuleRequest;
 import com.zolty.app.dto.RuleResponse;
+import com.zolty.app.model.RuleType;
 import com.zolty.app.service.RuleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/rules")
@@ -42,5 +45,15 @@ public class RuleController {
         ruleService.deleteRule(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/types")
+    public ResponseEntity<List<Map<String, String>>> getRuleTypes() {
+        List<Map<String, String>> types = Arrays.stream(RuleType.values())
+                .map(type -> Map.of("name", type.name(), "displayName", type.getDisplayName()))
+                .toList();
+        return ResponseEntity.ok(types);
+    }
+
+
 
 }
