@@ -6,9 +6,7 @@ import lombok.Data;
 @Data
 public class RuleRequest {
     private RuleType ruleType;
-
-    // np. "Synergy", "Conflict", "Beneficial", "Harmful"
-    private Integer points;  // np. +2, -5 itd.
+    private Integer points;
     private Long ingredientAId;
     private Long ingredientBId;
 }

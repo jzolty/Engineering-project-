@@ -19,7 +19,9 @@ public class Rule {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "rule_type")
     private RuleType ruleType;
+
 
     private Integer points;
 

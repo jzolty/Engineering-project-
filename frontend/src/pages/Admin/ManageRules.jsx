@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import "./ManageRules.css";
 import { FaTrashAlt, FaPlus } from "react-icons/fa";
-import { getAllRules, getAllIngredients, addRule, updateRule, deleteRule } from "../../services/ruleService";
+import {
+    getAllRules,
+    getAllIngredients,
+    addRule,
+    updateRule,
+    deleteRule,
+} from "../../services/ruleService";
 
 const ManageRules = () => {
     const [rules, setRules] = useState([]);
@@ -16,6 +22,37 @@ const ManageRules = () => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
 
+    // 🔹 Mapowanie PL ↔ Enum
+    const mapPolishToEnum = (type) => {
+        switch (type) {
+            case "Korzyść":
+                return "BENEFICIAL";
+            case "Szkodliwa interakcja":
+                return "HARMFUL";
+            case "Synergia":
+                return "SYNERGY";
+            case "Konflikt":
+                return "CONFLICT";
+            default:
+                return type;
+        }
+    };
+
+    const mapEnumToPolish = (type) => {
+        switch (type) {
+            case "BENEFICIAL":
+                return "Korzyść";
+            case "HARMFUL":
+                return "Szkodliwa interakcja";
+            case "SYNERGY":
+                return "Synergia";
+            case "CONFLICT":
+                return "Konflikt";
+            default:
+                return type;
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -26,7 +63,8 @@ const ManageRules = () => {
                 setRules(rulesData);
                 setIngredients(ingredientsData);
             } catch (error) {
-                setMessage("❌ Błąd pobierania danych.");
+                console.error("Błąd pobierania danych:", error);
+                setMessage(" Błąd pobierania danych.");
             } finally {
                 setLoading(false);
             }
@@ -34,6 +72,7 @@ const ManageRules = () => {
         fetchData();
     }, []);
 
+    // 🔹 Dodaj regułę
     const handleAddRule = async () => {
         try {
             if (!newRule.ingredientAId || !newRule.ingredientBId) {
@@ -44,27 +83,50 @@ const ManageRules = () => {
                 alert("Nie można wybrać dwóch takich samych składników!");
                 return;
             }
-            const createdRule = await addRule(newRule);
+
+            const createdRule = await addRule({
+                ...newRule,
+                ruleType: mapPolishToEnum(newRule.ruleType),
+            });
+
             setRules((prev) => [...prev, createdRule]);
-            setNewRule({ ingredientAId: "", ingredientBId: "", ruleType: "BENEFICIAL", points: 0 });
+            setNewRule({
+                ingredientAId: "",
+                ingredientBId: "",
+                ruleType: "BENEFICIAL",
+                points: 0,
+            });
             setMessage("✅ Reguła została dodana.");
         } catch (error) {
-            setMessage("❌ " + (error.response?.data?.message || "Nie udało się dodać reguły."));
+            setMessage(
+                " " +
+                (error.response?.data?.message || "Nie udało się dodać reguły.")
+            );
         }
     };
 
+    // 🔹 Edytuj regułę
     const handleEditRule = async (id, updatedRule) => {
         try {
-            await updateRule(id, updatedRule);
+            await updateRule(id, {
+                ...updatedRule,
+                ruleType: mapPolishToEnum(updatedRule.ruleType),
+            });
+
             setRules((prev) =>
-                prev.map((r) => (r.id === id ? { ...r, ...updatedRule } : r))
+                prev.map((r) =>
+                    r.id === id
+                        ? { ...r, ...updatedRule, ruleType: mapEnumToPolish(updatedRule.ruleType) }
+                        : r
+                )
             );
-            setMessage("✅ Zaktualizowano regułę.");
+            setMessage(" Zaktualizowano regułę.");
         } catch (error) {
-            setMessage("❌ Nie udało się zaktualizować reguły.");
+            setMessage(" Nie udało się zaktualizować reguły.");
         }
     };
 
+    // 🔹 Usuń regułę
     const handleDeleteRule = async (id) => {
         const confirmDelete = window.confirm("Czy na pewno chcesz usunąć tę regułę?");
         if (!confirmDelete) return;
@@ -72,20 +134,9 @@ const ManageRules = () => {
         try {
             await deleteRule(id);
             setRules((prev) => prev.filter((r) => r.id !== id));
-            setMessage("🗑️ Reguła została usunięta.");
+            setMessage(" Reguła została usunięta.");
         } catch (error) {
-            setMessage("❌ Błąd usuwania reguły.");
-        }
-    };
-
-    const translateType = (type) => {
-        switch (type) {
-            case "BENEFICIAL":
-                return "Korzyść";
-            case "HARMFUL":
-                return "Szkodliwa interakcja";
-            default:
-                return type;
+            setMessage(" Błąd usuwania reguły.");
         }
     };
 
@@ -102,13 +153,15 @@ const ManageRules = () => {
 
                 {message && <p className="manage-rules-message">{message}</p>}
 
-                {/* Formularz dodawania reguły */}
+                {/* 🔹 Formularz dodawania reguły */}
                 <div className="add-rule-section">
                     <h4>Dodaj nową regułę</h4>
                     <div className="add-rule-form">
                         <select
                             value={newRule.ingredientAId}
-                            onChange={(e) => setNewRule({ ...newRule, ingredientAId: e.target.value })}
+                            onChange={(e) =>
+                                setNewRule({ ...newRule, ingredientAId: e.target.value })
+                            }
                         >
                             <option value="">Składnik A</option>
                             {ingredients.map((ing) => (
@@ -120,7 +173,9 @@ const ManageRules = () => {
 
                         <select
                             value={newRule.ingredientBId}
-                            onChange={(e) => setNewRule({ ...newRule, ingredientBId: e.target.value })}
+                            onChange={(e) =>
+                                setNewRule({ ...newRule, ingredientBId: e.target.value })
+                            }
                         >
                             <option value="">Składnik B</option>
                             {ingredients.map((ing) => (
@@ -132,16 +187,22 @@ const ManageRules = () => {
 
                         <select
                             value={newRule.ruleType}
-                            onChange={(e) => setNewRule({ ...newRule, ruleType: e.target.value })}
+                            onChange={(e) =>
+                                setNewRule({ ...newRule, ruleType: e.target.value })
+                            }
                         >
                             <option value="BENEFICIAL">Korzyść</option>
                             <option value="HARMFUL">Szkodliwa interakcja</option>
+                            <option value="SYNERGY">Synergia</option>
+                            <option value="CONFLICT">Konflikt</option>
                         </select>
 
                         <input
                             type="number"
                             value={newRule.points}
-                            onChange={(e) => setNewRule({ ...newRule, points: parseInt(e.target.value) })}
+                            onChange={(e) =>
+                                setNewRule({ ...newRule, points: parseInt(e.target.value) })
+                            }
                             placeholder="Punkty"
                         />
 
@@ -151,7 +212,7 @@ const ManageRules = () => {
                     </div>
                 </div>
 
-                {/* Tabela reguł */}
+                {/* 🔹 Tabela reguł */}
                 <div className="rules-table-wrapper">
                     <table className="rules-table">
                         <thead>
@@ -177,14 +238,19 @@ const ManageRules = () => {
                                     <td>{rule.ingredientB}</td>
                                     <td>
                                         <select
-                                            value={rule.ruleType}
+                                            value={mapPolishToEnum(rule.ruleType)}
                                             onChange={(e) =>
-                                                handleEditRule(rule.id, { ...rule, ruleType: e.target.value })
+                                                handleEditRule(rule.id, {
+                                                    ...rule,
+                                                    ruleType: e.target.value,
+                                                })
                                             }
                                             className="rule-type-dropdown"
                                         >
                                             <option value="BENEFICIAL">Korzyść</option>
                                             <option value="HARMFUL">Szkodliwa interakcja</option>
+                                            <option value="SYNERGY">Synergia</option>
+                                            <option value="CONFLICT">Konflikt</option>
                                         </select>
                                     </td>
                                     <td>
@@ -192,7 +258,10 @@ const ManageRules = () => {
                                             type="number"
                                             value={rule.points}
                                             onChange={(e) =>
-                                                handleEditRule(rule.id, { ...rule, points: parseInt(e.target.value) })
+                                                handleEditRule(rule.id, {
+                                                    ...rule,
+                                                    points: parseInt(e.target.value),
+                                                })
                                             }
                                             className="points-input"
                                         />
