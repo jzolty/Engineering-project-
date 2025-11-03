@@ -6,6 +6,7 @@ import com.zolty.app.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,7 @@ public class ProductMapper {
         product.setName(request.getName());
         product.setBrand(request.getBrand());
 
-        // 🔹 Kategorie (bezpieczna konwersja)
+        // Kategorie (bezpieczna konwersja)
         if (request.getCategory() != null) {
             try {
                 product.setCategory(Category.valueOf(request.getCategory().toUpperCase()));
@@ -26,10 +27,10 @@ public class ProductMapper {
             }
         }
 
-        // 🔹 Opis
+        //  Opis
         product.setDescription(request.getDescription());
 
-        // 🔹 Typy skóry (Set<SkinType>)
+        //  Typy skóry (Set<SkinType>)
         if (request.getSkinTypes() != null && !request.getSkinTypes().isEmpty()) {
             Set<SkinType> skinTypeEnums = request.getSkinTypes().stream()
                     .map(s -> SkinType.valueOf(s.toUpperCase()))
@@ -37,7 +38,7 @@ public class ProductMapper {
             product.setSkinTypes(skinTypeEnums);
         }
 
-        // 🔹 Płeć docelowa (enum Sex)
+        //  Płeć docelowa (enum Sex)
         if (request.getTargetSex() != null) {
             try {
                 product.setTargetSex(Sex.valueOf(request.getTargetSex().toUpperCase()));
@@ -46,7 +47,7 @@ public class ProductMapper {
             }
         }
 
-        // 🔹 Grupa wiekowa (enum AgeGroup)
+        //  Grupa wiekowa (enum AgeGroup)
         if (request.getTargetAgeGroup() != null) {
             try {
                 product.setTargetAgeGroup(AgeGroup.valueOf(request.getTargetAgeGroup().toUpperCase()));
@@ -100,21 +101,33 @@ public class ProductMapper {
 
         response.setNotRecommendedDuringPregnancy(product.getNotRecommendedDuringPregnancy());
 
-        //  Składniki
+
+
+        //  Składniki (z ID i nazwą)
         if (product.getProductIngredients() != null) {
-            List<String> ingredientNames = product.getProductIngredients().stream()
-                    .map(pi -> pi.getIngredient().getName())
+            List<Map<String, Object>> ingredients = product.getProductIngredients().stream()
+                    .map(pi -> (Map<String, Object>) Map.<String, Object>of(
+                            "id", pi.getIngredient().getId(),
+                            "name", pi.getIngredient().getName()
+                    ))
+
                     .collect(Collectors.toList());
-            response.setIngredients(ingredientNames);
+            response.setIngredients(ingredients);
         }
 
-        // Cele
+//  Cele (z ID i nazwą)
         if (product.getProductGoals() != null) {
-            List<String> goalNames = product.getProductGoals().stream()
-                    .map(pg -> pg.getGoal().getName())
+            List<Map<String, Object>> goals = product.getProductGoals().stream()
+                    .map(pg -> (Map<String, Object>) Map.<String, Object>of(
+                            "id", pg.getGoal().getId(),
+                            "name", pg.getGoal().getName()
+                    ))
+
                     .collect(Collectors.toList());
-            response.setGoals(goalNames);
+            response.setGoals(goals);
         }
+
+
 
         return response;
     }

@@ -56,10 +56,11 @@ const EditProduct = () => {
     const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
 
-    // 🔹 Pobierz dane produktu i enumy
+    //  Pobierz dane produktu i enumy
     useEffect(() => {
         const loadData = async () => {
             try {
+                // 🔹 Pobierz wszystko na świeżo (unikamy starych ID)
                 const [
                     productRes,
                     categories,
@@ -81,6 +82,7 @@ const EditProduct = () => {
                 ]);
 
                 const p = productRes.data;
+
                 setForm({
                     name: p.name || "",
                     brand: p.brand || "",
@@ -94,8 +96,16 @@ const EditProduct = () => {
                     isEcoCertified: p.isEcoCertified || false,
                     notRecommendedDuringPregnancy: p.notRecommendedDuringPregnancy || false,
                     useTime: p.useTime || "",
-                    ingredientIds: p.ingredients ? p.ingredients.map((_, idx) => idx + 1) : [],
-                    goalIds: p.goals ? p.goals.map((_, idx) => idx + 1) : [],
+                    ingredientIds: p.ingredients
+                        ? p.ingredients
+                            .filter((ing) => ing && ing.id != null)
+                            .map((ing) => ing.id)
+                        : [],
+                    goalIds: p.goals
+                        ? p.goals
+                            .filter((goal) => goal && goal.id != null)
+                            .map((goal) => goal.id)
+                        : [],
                 });
 
                 setEnums({
@@ -106,10 +116,11 @@ const EditProduct = () => {
                     useTimes: useTimes.data,
                 });
 
+                // 🔹 Zawsze świeża lista z backendu
                 setIngredients(ingredientsRes.data);
                 setGoals(goalsRes.data);
             } catch (err) {
-                console.error("Błąd ładowania danych produktu:", err);
+                console.error(" Błąd ładowania danych produktu:", err);
                 alert("Nie udało się załadować danych produktu.");
             } finally {
                 setLoading(false);
@@ -118,6 +129,7 @@ const EditProduct = () => {
 
         loadData();
     }, [id]);
+
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -131,11 +143,27 @@ const EditProduct = () => {
         e.preventDefault();
 
         try {
-            await productService.updateProduct(id, form);
+            const formattedForm = {
+                ...form,
+                category: form.category?.toUpperCase() || null,
+                targetSex: form.targetSex?.toUpperCase() || null,
+                targetAgeGroup: form.targetAgeGroup?.toUpperCase() || null,
+                useTime: form.useTime?.toUpperCase() || null,
+                skinTypes: form.skinTypes ? form.skinTypes.map((t) => t.toUpperCase()) : [],
+                ingredientIds: form.ingredientIds?.filter((id) => id != null && id !== undefined) || [],
+                goalIds: form.goalIds?.filter((id) => id != null && id !== undefined) || [],
+            };
+
+
+            await productService.updateProduct(id, formattedForm);
+
             alert("Zmiany zostały zapisane pomyślnie!");
             navigate("/admin/manage-products");
         } catch (err) {
             console.error("Błąd aktualizacji produktu:", err);
+            console.log("PUT → id:", id);
+           // console.log("PUT → dane:", formData);
+
             alert("Nie udało się zapisać zmian.");
         }
     };

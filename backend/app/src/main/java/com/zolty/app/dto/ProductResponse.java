@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Getter
@@ -33,6 +34,6 @@ public class ProductResponse {
 
     private String useTime;
 
-    private List<String> ingredients;
-    private List<String> goals;
+    private List<Map<String, Object>> ingredients;
+    private List<Map<String, Object>> goals;
 }

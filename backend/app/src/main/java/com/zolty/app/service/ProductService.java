@@ -156,40 +156,74 @@ public class ProductService {
             }
         }
 
-        // 🔹 Jeśli chcesz aktualizować składniki i cele (opcjonalnie)
+        //  Jeśli chcesz aktualizować składniki i cele (opcjonalnie)
+//        if (request.getIngredientIds() != null) {
+//            productIngredientRepository.deleteByProductId(product.getId());
+//            for (Long ingredientId : request.getIngredientIds()) {
+//                Ingredient ingredient = ingredientRepository.findById(ingredientId)
+//                        .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found: " + ingredientId));
+//                ProductIngredient relation = new ProductIngredient(
+//                        new ProductIngredientId(product.getId(), ingredient.getId()),
+//                        product,
+//                        ingredient
+//                );
+//                productIngredientRepository.save(relation);
+//            }
+//        }
+        // 🔹 Aktualizacja składników
+        // 🔹 Lokalne finalne odniesienie (potrzebne do lambd)
+        final Product currentProduct = product;
+
+// 🔹 Aktualizacja składników
         if (request.getIngredientIds() != null) {
-            productIngredientRepository.deleteByProductId(product.getId());
-            for (Long ingredientId : request.getIngredientIds()) {
-                Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found: " + ingredientId));
-                ProductIngredient relation = new ProductIngredient(
-                        new ProductIngredientId(product.getId(), ingredient.getId()),
-                        product,
-                        ingredient
-                );
-                productIngredientRepository.save(relation);
-            }
+            productIngredientRepository.deleteByProductId(currentProduct.getId());
+            request.getIngredientIds().stream()
+                    .filter(ingredientId -> ingredientId != null)
+                    .forEach(ingredientId -> {
+                        ingredientRepository.findById(ingredientId).ifPresentOrElse(
+                                ingredient -> {
+                                    ProductIngredient relation = new ProductIngredient(
+                                            new ProductIngredientId(currentProduct.getId(), ingredient.getId()),
+                                            currentProduct,
+                                            ingredient
+                                    );
+                                    productIngredientRepository.save(relation);
+                                },
+                                () -> {
+                                    System.out.println("⚠️ Ingredient with ID " + ingredientId + " not found, skipped.");
+                                }
+                        );
+                    });
         }
 
+// 🔹 Aktualizacja celów
         if (request.getGoalIds() != null) {
-            productGoalRepository.deleteByProductId(product.getId());
-            for (Long goalId : request.getGoalIds()) {
-                Goal goal = goalRepository.findById(goalId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Goal not found: " + goalId));
-                ProductGoal relation = new ProductGoal(
-                        new ProductGoalId(product.getId(), goal.getId()),
-                        product,
-                        goal
-                );
-                productGoalRepository.save(relation);
-            }
+            productGoalRepository.deleteByProductId(currentProduct.getId());
+            request.getGoalIds().stream()
+                    .filter(goalId -> goalId != null)
+                    .forEach(goalId -> {
+                        goalRepository.findById(goalId).ifPresentOrElse(
+                                goal -> {
+                                    ProductGoal relation = new ProductGoal(
+                                            new ProductGoalId(currentProduct.getId(), goal.getId()),
+                                            currentProduct,
+                                            goal
+                                    );
+                                    productGoalRepository.save(relation);
+                                },
+                                () -> {
+                                    System.out.println("⚠️ Goal with ID " + goalId + " not found, skipped.");
+                                }
+                        );
+                    });
         }
 
-        // 🔹 Zapisz zmiany i zwróć wynik
-        productRepository.save(product);
-        product = productRepository.findById(product.getId()).orElseThrow();
-        return productMapper.toDto(product);
+// 🔹 Zapisz zmiany i zwróć wynik
+        productRepository.save(currentProduct);
+        Product updated = productRepository.findById(currentProduct.getId()).orElseThrow();
+        return productMapper.toDto(updated);
     }
 
-
 }
+
+

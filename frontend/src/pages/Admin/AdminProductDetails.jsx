@@ -53,7 +53,7 @@ const AdminProductDetails = () => {
             try {
                 await productService.deleteProduct(id);
                 alert("Produkt został usunięty.");
-                navigate("/admin/products");
+                navigate("/admin/manage-products");
             } catch (error) {
                 console.error("Błąd podczas usuwania produktu:", error);
                 alert("Nie udało się usunąć produktu.");
@@ -161,7 +161,13 @@ const AdminProductDetails = () => {
                 {product.ingredients && product.ingredients.length > 0 && (
                     <div className="ingredients">
                         <h3>Skład (INCI)</h3>
-                        <p>{product.ingredients.join(", ")}</p>
+                        <ul>
+                            {product.ingredients.map((ing, i) => (
+                                <li key={ing.id || i}>
+                                    {ing.name || ing}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 )}
 
@@ -171,11 +177,14 @@ const AdminProductDetails = () => {
                         <h3>Efekty działania</h3>
                         <ul>
                             {product.goals.map((goal, i) => (
-                                <li key={i}>{goal}</li>
+                                <li key={goal.id || i}>
+                                    {goal.name || goal}
+                                </li>
                             ))}
                         </ul>
                     </div>
                 )}
+
             </div>
         </div>
     );
