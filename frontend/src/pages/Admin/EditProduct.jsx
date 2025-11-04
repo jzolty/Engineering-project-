@@ -142,6 +142,19 @@ const EditProduct = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // 🔹 Walidacja pól wymaganych
+        const newErrors = {};
+        if (!form.name.trim()) newErrors.name = "Nazwa produktu jest wymagana.";
+        if (!form.brand.trim()) newErrors.brand = "Marka produktu jest wymagana.";
+        if (!form.category) newErrors.category = "Wybierz kategorię.";
+        if (!form.useTime) newErrors.useTime = "Wybierz porę dnia.";
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            alert("Uzupełnij wymagane pola.");
+            return;
+        }
+
         try {
             const formattedForm = {
                 ...form,
@@ -150,23 +163,19 @@ const EditProduct = () => {
                 targetAgeGroup: form.targetAgeGroup?.toUpperCase() || null,
                 useTime: form.useTime?.toUpperCase() || null,
                 skinTypes: form.skinTypes ? form.skinTypes.map((t) => t.toUpperCase()) : [],
-                ingredientIds: form.ingredientIds?.filter((id) => id != null && id !== undefined) || [],
-                goalIds: form.goalIds?.filter((id) => id != null && id !== undefined) || [],
+                ingredientIds: form.ingredientIds?.filter((id) => id != null) || [],
+                goalIds: form.goalIds?.filter((id) => id != null) || [],
             };
 
-
             await productService.updateProduct(id, formattedForm);
-
             alert("Zmiany zostały zapisane pomyślnie!");
             navigate("/admin/manage-products");
         } catch (err) {
             console.error("Błąd aktualizacji produktu:", err);
-            console.log("PUT → id:", id);
-           // console.log("PUT → dane:", formData);
-
             alert("Nie udało się zapisać zmian.");
         }
     };
+
 
     if (loading) return <p style={{ textAlign: "center" }}>Ładowanie danych...</p>;
 

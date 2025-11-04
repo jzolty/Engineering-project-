@@ -110,7 +110,7 @@ public class ProductMapper {
                             "id", pi.getIngredient().getId(),
                             "name", pi.getIngredient().getName()
                     ))
-
+                    .sorted((a, b) -> a.get("name").toString().compareToIgnoreCase(b.get("name").toString()))
                     .collect(Collectors.toList());
             response.setIngredients(ingredients);
         }
@@ -122,7 +122,7 @@ public class ProductMapper {
                             "id", pg.getGoal().getId(),
                             "name", pg.getGoal().getName()
                     ))
-
+                    .sorted((a, b) -> a.get("name").toString().compareToIgnoreCase(b.get("name").toString()))
                     .collect(Collectors.toList());
             response.setGoals(goals);
         }
