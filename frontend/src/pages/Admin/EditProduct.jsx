@@ -12,14 +12,33 @@ const translations = {
     MORNING: "Poranna",
     EVENING: "Wieczorna",
     ANY: "Dowolna",
+
     FEMALE: "Kobieta",
     MALE: "Mężczyzna",
-    ALL: "Unisex",
+    ALLSEX:"Dowolna płeć",
+
+    TEEN: "Nastolatek",
+    YOUNG_ADULT: "Młody dorosły",
+    ADULT: "Dorosły",
+    MATURE: "Dojrzały",
+    ALL: "Każdy wiek",
+
     DRY: "Sucha",
     OILY: "Tłusta",
     SENSITIVE: "Wrażliwa",
     COMBINATION: "Mieszana",
     NORMAL: "Normalna",
+
+
+    CREAM: "Krem",
+    SERUM: "Serum",
+    TONER: "Tonik",
+    SPF: "Filtr przeciwsłoneczny",
+    CLEANSER: "Preparat oczyszczający",
+    MASK: "Maseczka",
+    MICELLAR_WATER: "Płyn micelarny",
+    EYE_CREAM: "Krem pod oczy",
+    OTHER: "Inny",
 };
 
 const EditProduct = () => {

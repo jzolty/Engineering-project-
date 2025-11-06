@@ -31,9 +31,8 @@ public class ProductRequest {
 
     private String useTime;
 
+    private List<String> ingredientNames;
 
-    //private Set<String> ingredients;
-   // private Set<String> goals;
-   private List<Long> ingredientIds;
+    private List<Long> ingredientIds;
     private List<Long> goalIds;
 }

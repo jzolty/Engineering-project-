@@ -19,18 +19,38 @@ const ManageProducts = () => {
 
     const navigate = useNavigate();
 
-    // 🔹 Mapy tłumaczeń dla enumów
-    const sexLabels = {
-        FEMALE: "Kobieta",
-        MALE: "Mężczyzna",
-        ALL: "Unisex",
-    };
-
-    const useTimeLabels = {
+    const translations = {
         MORNING: "Poranna",
         EVENING: "Wieczorna",
         ANY: "Dowolna",
+
+        FEMALE: "Kobieta",
+        MALE: "Mężczyzna",
+        ALLSEX: "Unisex",
+
+        TEEN: "Nastolatek",
+        YOUNG_ADULT: "Młody dorosły",
+        ADULT: "Dorosły",
+        MATURE: "Dojrzała",
+        ALL: "Każdy wiek",
+
+        DRY: "Sucha",
+        OILY: "Tłusta",
+        SENSITIVE: "Wrażliwa",
+        COMBINATION: "Mieszana",
+        NORMAL: "Normalna",
+
+        CREAM: "Krem",
+        SERUM: "Serum",
+        TONER: "Tonik",
+        SPF: "Filtr przeciwsłoneczny",
+        CLEANSER: "Preparat oczyszczający",
+        MASK: "Maseczka",
+        MICELLAR_WATER: "Płyn micelarny",
+        EYE_CREAM: "Krem pod oczy",
+        OTHER: "Inny"
     };
+
 
     // 🔹 Pobieranie produktów
     useEffect(() => {
@@ -55,7 +75,7 @@ const ManageProducts = () => {
         }));
     };
 
-    // 🔹 Filtrowanie po stronie frontendu
+    //  Filtrowanie po stronie frontendu
     const filteredProducts = products.filter((p) => {
         return (
             (filters.name === "" ||
@@ -63,7 +83,9 @@ const ManageProducts = () => {
             (filters.brand === "" ||
                 p.brand.toLowerCase().includes(filters.brand.toLowerCase())) &&
             (filters.category === "" ||
-                p.category.toLowerCase().includes(filters.category.toLowerCase())) &&
+                translations[p.category]?.toLowerCase().includes(filters.category.toLowerCase()) ||
+                p.category.toLowerCase().includes(filters.category.toLowerCase()))
+            &&
             (filters.use_time === "" || p.useTime === filters.use_time) &&
             (filters.target_sex === "" || p.targetSex === filters.target_sex) &&
             (filters.is_vegan === "" || String(p.isVegan) === String(filters.is_vegan)) &&
@@ -74,14 +96,14 @@ const ManageProducts = () => {
         );
     });
 
-    // 🔹 Ikony logiczne
+    //  Ikony logiczne
     const renderIcon = (value) => {
         if (value === true) return <span className="icon-true">✓</span>;
         if (value === false) return <span className="icon-false">✗</span>;
         return <span className="icon-unknown">•</span>;
     };
 
-    // 🔹 CRUD
+    //  CRUD
     const handleDelete = async (id) => {
         if (window.confirm("Czy na pewno chcesz usunąć ten produkt?")) {
             try {
@@ -146,7 +168,7 @@ const ManageProducts = () => {
                         <option value="">Wszystkie</option>
                         <option value="FEMALE">Kobieta</option>
                         <option value="MALE">Mężczyzna</option>
-                        <option value="ALL">Unisex</option>
+                        <option value="ALLSEX">Unisex</option>
                     </select>
 
                     {/* Sekcja radiobuttonów */}
@@ -234,9 +256,12 @@ const ManageProducts = () => {
                                 </td>
 
                                 <td>{p.brand}</td>
-                                <td>{p.category}</td>
-                                <td>{sexLabels[p.targetSex]}</td>
-                                <td>{useTimeLabels[p.useTime]}</td>
+                                <td>{translations[p.category] || p.category}</td>
+
+                                <td>{translations[p.targetSex] || p.targetSex}</td>
+
+                                <td>{translations[p.useTime] || p.useTime}</td>
+
                                 <td>{renderIcon(p.isVegan)}</td>
                                 <td>{renderIcon(p.isCrueltyFree)}</td>
                                 <td>{renderIcon(p.isEcoCertified)}</td>

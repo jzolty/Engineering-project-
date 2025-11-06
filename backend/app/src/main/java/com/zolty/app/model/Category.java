@@ -7,5 +7,7 @@ public enum Category {
     SPF,
     CLEANSER,
     MASK,
+    MICELLAR_WATER,
+    EYE_CREAM,
     OTHER
 }

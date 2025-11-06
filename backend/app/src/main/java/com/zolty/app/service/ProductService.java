@@ -28,9 +28,33 @@ public class ProductService {
 
     @Transactional
     public ProductResponse addProduct(ProductRequest request) {
+
         // utwórz obiekt z mappera (ustawia m.in. kategorię jako enum)
         Product product = productMapper.toEntity(request);
         productRepository.save(product);
+        System.out.println(" Received ingredientNames: " + request.getIngredientNames());
+
+        //  Obsługa ingredientNames → ingredientIds
+        if (request.getIngredientNames() != null && !request.getIngredientNames().isEmpty()) {
+            List<Long> ingredientIds = request.getIngredientNames().stream()
+                    .map(String::trim)
+                    .filter(name -> !name.isEmpty())
+                    .map(name -> {
+                        // Szukamy składnika po nazwie
+                        return ingredientRepository.findByNameIgnoreCase(name)
+                                // Jeśli nie istnieje, tworzymy nowy
+                                .orElseGet(() -> {
+                                    Ingredient newIngredient = Ingredient.builder().name(name).build();
+                                    ingredientRepository.save(newIngredient);
+                                    return newIngredient;
+                                })
+                                .getId();
+                    })
+                    .collect(Collectors.toList());
+            request.setIngredientIds(ingredientIds);
+        }
+
+
 
         //  powiązanie składników
         if (request.getIngredientIds() != null) {
@@ -59,8 +83,16 @@ public class ProductService {
                 productGoalRepository.save(relation);
             }
         }
-        product = productRepository.findById(product.getId()).orElseThrow();
+        //  Odśwież produkt z relacjami składników i celów
+        product = productRepository.findById(product.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found after saving"));
+
+//  Wymuś załadowanie relacji (lazy -> eager workaround)
+        product.getProductIngredients().size();
+        product.getProductGoals().size();
+
         return productMapper.toDto(product);
+
     }
 
     public List<ProductResponse> getAllProducts() {

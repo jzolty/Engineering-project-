@@ -12,14 +12,32 @@ const translations = {
     MORNING: "Poranna",
     EVENING: "Wieczorna",
     ANY: "Dowolna",
+
     FEMALE: "Kobieta",
     MALE: "Mężczyzna",
-    ALL: "Unisex",
+    ALLSEX: "Dowolna płeć",
+
+    TEEN: "Nastolatek",
+    YOUNG_ADULT: "Młody dorosły",
+    ADULT: "Dorosły",
+    MATURE: "Dojrzała",
+    ALL: "Każdy wiek",
+
     DRY: "Sucha",
     OILY: "Tłusta",
     SENSITIVE: "Wrażliwa",
     COMBINATION: "Mieszana",
     NORMAL: "Normalna",
+
+    CREAM: "Krem",
+    SERUM: "Serum",
+    TONER: "Tonik",
+    SPF: "Filtr przeciwsłoneczny",
+    CLEANSER: "Preparat oczyszczający",
+    MASK: "Maseczka",
+    MICELLAR_WATER: "Płyn micelarny",
+    EYE_CREAM: "Krem pod oczy",
+    OTHER: "Inny",
 };
 
 const AddProduct = () => {
@@ -39,6 +57,7 @@ const AddProduct = () => {
         notRecommendedDuringPregnancy: false,
         useTime: "",
         ingredientIds: [],
+        ingredientNames: [],
         goalIds: [],
     });
 
@@ -54,6 +73,7 @@ const AddProduct = () => {
     const [goals, setGoals] = useState([]);
     const [newIngredient, setNewIngredient] = useState("");
     const [newGoal, setNewGoal] = useState("");
+    const [ingredientInput, setIngredientInput] = useState(""); // 🆕 INCI text area
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -104,14 +124,22 @@ const AddProduct = () => {
                 const res = await ingredientService.addIngredient({ name: newIngredient });
                 setIngredients((prev) => [...prev, res.data]);
                 setNewIngredient("");
+                alert(`Dodano nowy składnik: ${res.data.name}`);
             }
+
             if (type === "goal" && newGoal.trim() !== "") {
                 const res = await goalService.addGoal({ name: newGoal });
                 setGoals((prev) => [...prev, res.data]);
                 setNewGoal("");
+                alert(`Dodano nowy cel: ${res.data.name}`);
             }
         } catch (err) {
             console.error("Błąd przy dodawaniu:", err);
+            if (err.response && err.response.data && err.response.data.message) {
+                alert(`${err.response.data.message}`);
+            } else {
+                alert("Nie udało się dodać składnika/celu. Spróbuj ponownie.");
+            }
         }
     };
 
@@ -130,14 +158,36 @@ const AddProduct = () => {
         e.preventDefault();
         if (!validateForm()) return;
 
+        const payload = { ...form };
+
+        //  jeśli użytkownik wkleił skład INCI — używamy ingredientNames
+        if (form.ingredientNames && form.ingredientNames.length > 0) {
+            delete payload.ingredientIds;
+        } else if (form.ingredientIds.length > 0) {
+            delete payload.ingredientNames;
+        }
+
         try {
-            await productService.addProduct(form);
+            await productService.addProduct(payload);
             alert("Produkt został dodany pomyślnie!");
             navigate("/admin/manage-products");
         } catch (err) {
             console.error("Błąd dodawania produktu:", err);
             alert("Nie udało się dodać produktu.");
         }
+    };
+
+    //  funkcja do parsowania INCI po przecinku
+    const parseINCI = () => {
+        const parsed = ingredientInput
+            .split(",")
+            .map((i) => i.trim())
+            .filter((i) => i.length > 0);
+        setForm((prev) => ({
+            ...prev,
+            ingredientNames: parsed,
+        }));
+        alert(`Dodano ${parsed.length} składników do listy.`);
     };
 
     return (
@@ -148,29 +198,15 @@ const AddProduct = () => {
 
                 <form onSubmit={handleSubmit} className="product-form">
                     <label>Nazwa *</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                    />
+                    <input type="text" name="name" value={form.name} onChange={handleChange} />
                     {errors.name && <p className="error">{errors.name}</p>}
 
                     <label>Marka *</label>
-                    <input
-                        type="text"
-                        name="brand"
-                        value={form.brand}
-                        onChange={handleChange}
-                    />
+                    <input type="text" name="brand" value={form.brand} onChange={handleChange} />
                     {errors.brand && <p className="error">{errors.brand}</p>}
 
                     <label>Kategoria *</label>
-                    <select
-                        name="category"
-                        value={form.category}
-                        onChange={handleChange}
-                    >
+                    <select name="category" value={form.category} onChange={handleChange}>
                         <option value="">-- wybierz --</option>
                         {enums.categories.map((c) => (
                             <option key={c} value={c}>
@@ -203,18 +239,10 @@ const AddProduct = () => {
                     />
 
                     <label>Opis</label>
-                    <textarea
-                        name="description"
-                        value={form.description}
-                        onChange={handleChange}
-                    />
+                    <textarea name="description" value={form.description} onChange={handleChange} />
 
                     <label>Płeć docelowa *</label>
-                    <select
-                        name="targetSex"
-                        value={form.targetSex}
-                        onChange={handleChange}
-                    >
+                    <select name="targetSex" value={form.targetSex} onChange={handleChange}>
                         <option value="">-- wybierz --</option>
                         {enums.targetSexes.map((s) => (
                             <option key={s} value={s}>
@@ -239,11 +267,7 @@ const AddProduct = () => {
                     </select>
 
                     <label>Pora dnia *</label>
-                    <select
-                        name="useTime"
-                        value={form.useTime}
-                        onChange={handleChange}
-                    >
+                    <select name="useTime" value={form.useTime} onChange={handleChange}>
                         <option value="">-- wybierz --</option>
                         {enums.useTimes.map((u) => (
                             <option key={u} value={u}>
@@ -292,7 +316,23 @@ const AddProduct = () => {
                         </label>
                     </div>
 
-                    <h3>Składniki</h3>
+                    {/*  SEKCJA — Wklej INCI */}
+                    <h3>Skład (INCI)</h3>
+                    <label>Lub wklej skład INCI po przecinku:</label>
+                    <textarea
+                        value={ingredientInput}
+                        onChange={(e) => setIngredientInput(e.target.value)}
+                        placeholder="Np. Aqua, Glycerin, Niacinamide, Panthenol..."
+                        rows={4}
+                    />
+                    <button type="button" className="parse-btn" onClick={parseINCI}>
+                        Przetwórz skład INCI
+                    </button>
+
+                    <p style={{ fontSize: "0.9em", color: "#666", marginTop: "6px" }}>
+                        Możesz też wybrać składniki z listy poniżej ⬇️
+                    </p>
+
                     <Select
                         isMulti
                         name="ingredientIds"
