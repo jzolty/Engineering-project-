@@ -6,6 +6,6 @@ public enum SkinType {
     OILY,
     COMBINATION,
     SENSITIVE,
-    MATURE
+    MATURE_SKIN
 }
 

@@ -28,6 +28,7 @@ const translations = {
     SENSITIVE: "Wrażliwa",
     COMBINATION: "Mieszana",
     NORMAL: "Normalna",
+    MATURE_SKIN: "Dojrzała skóra",
 
 
     CREAM: "Krem",
