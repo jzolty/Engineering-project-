@@ -11,7 +11,19 @@ const ProductDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
-    // 🔹 Mapy tłumaczeń dla enumów
+    // 🔹 Mapy tłumaczeń
+    const categoryLabels = {
+        CLEANSER: "Preparat oczyszczający",
+        SERUM: "Serum",
+        TONER: "Tonik",
+        CREAM: "Krem",
+        MASK: "Maseczka",
+        SPF: "Filtr przeciwsłoneczny",
+        EYE_CREAM: "Krem pod oczy",
+        MICELLAR_WATER: "Płyn micelarny",
+        OTHER: "Inny produkt",
+    };
+
     const sexLabels = {
         FEMALE: "Kobieta",
         MALE: "Mężczyzna",
@@ -82,30 +94,35 @@ const ProductDetails = () => {
 
                 <h1>{product.name}</h1>
                 <p className="brand">{product.brand}</p>
-                <p className="category">{product.category}</p>
-                <p className="description">{product.description}</p>
+                <p className="category">
+                    {categoryLabels[product.category] || product.category}
+                </p>
+                {product.description && (
+                    <p className="description">{product.description}</p>
+                )}
 
                 {/* Sekcja głównych informacji */}
                 <div className="product-info">
                     <p>
-                        <strong>Dla kogo:</strong> {sexLabels[product.targetSex] || "—"}
+                        <strong>Dla kogo:</strong>{" "}
+                        {sexLabels[product.targetSex] || "—"}
                     </p>
                     <p>
-                        <strong>Pora dnia:</strong> {useTimeLabels[product.useTime] || "—"}
+                        <strong>Pora dnia:</strong>{" "}
+                        {useTimeLabels[product.useTime] || "—"}
                     </p>
                     <p>
                         <strong>Wegański:</strong> {renderIcon(product.isVegan)}
                     </p>
                     <p>
-                        <strong>Cruelty-free:</strong> {renderIcon(product.isCrueltyFree)}
+                        <strong>Cruelty-free:</strong>{" "}
+                        {renderIcon(product.isCrueltyFree)}
                     </p>
                     <p>
                         <strong>Eko:</strong> {renderIcon(product.isEcoCertified)}
                     </p>
                     {product.notRecommendedDuringPregnancy && (
-                        <p className="warning">
-                             Nie zalecany w okresie ciąży
-                        </p>
+                        <p className="warning">Nie zalecany w okresie ciąży</p>
                     )}
                 </div>
 
@@ -115,15 +132,21 @@ const ProductDetails = () => {
                         <h3>Typy skóry</h3>
                         <ul>
                             {product.skinTypes.map((type, i) => (
-                                <li key={i}>{type === "DRY"
-                                    ? "Sucha"
-                                    : type === "SENSITIVE"
-                                        ? "Wrażliwa"
-                                        : type === "COMBINATION"
-                                            ? "Mieszana"
-                                            : type === "OILY"
-                                                ? "Tłusta"
-                                                : type}</li>
+                                <li key={i}>
+                                    {type === "DRY"
+                                        ? "Sucha"
+                                        : type === "SENSITIVE"
+                                            ? "Wrażliwa"
+                                            : type === "COMBINATION"
+                                                ? "Mieszana"
+                                                : type === "OILY"
+                                                    ? "Tłusta"
+                                                    : type === "NORMAL"
+                                                        ? "Normalna"
+                                                        : type === "MATURE_SKIN"
+                                                            ? "Dojrzała"
+                                                            : type}
+                                </li>
                             ))}
                         </ul>
                     </div>
@@ -133,7 +156,15 @@ const ProductDetails = () => {
                 {product.ingredients && product.ingredients.length > 0 && (
                     <div className="ingredients">
                         <h3>Skład (INCI)</h3>
-                        <p>{product.ingredients.join(", ")}</p>
+                        <p>
+                            {product.ingredients
+                                .map((ing) =>
+                                    ing && typeof ing === "object"
+                                        ? ing.name
+                                        : ing
+                                )
+                                .join(", ")}
+                        </p>
                     </div>
                 )}
 
@@ -143,7 +174,11 @@ const ProductDetails = () => {
                         <h3>Efekty działania</h3>
                         <ul>
                             {product.goals.map((goal, i) => (
-                                <li key={i}>{goal}</li>
+                                <li key={i}>
+                                    {goal && typeof goal === "object"
+                                        ? goal.name
+                                        : goal}
+                                </li>
                             ))}
                         </ul>
                     </div>

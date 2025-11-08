@@ -1,6 +1,8 @@
 package com.zolty.app.dto;
 
 import lombok.*;
+
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -14,7 +16,7 @@ public class SkinAnalysisRequest {
     private String sex; // enum: MALE / FEMALE
     private Set<String> skinTypes;
     private Set<Long> goalIds; // cele pielęgnacyjne (np. nawilżenie, anti-aging)
-    private String avoidIngredients; // tekstowa lista składników do unikania
+    private List<String> avoidIngredients; // tekstowa lista składników do unikania
 
     // Dodatkowe preferencje
     private Boolean veganPreference;

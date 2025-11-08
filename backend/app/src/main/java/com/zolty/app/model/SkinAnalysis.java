@@ -19,10 +19,7 @@ public class SkinAnalysis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // użytkownik, który utworzył analizę
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+
 
     // powiązanie z have (1:N)
     @OneToOne(mappedBy = "skinAnalysis", cascade = CascadeType.ALL)

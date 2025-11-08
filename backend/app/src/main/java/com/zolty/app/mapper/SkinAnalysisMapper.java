@@ -35,7 +35,8 @@ public class SkinAnalysisMapper {
             analysis.setSkinTypes(types);
         }
 
-        analysis.setAvoidIngredients(request.getAvoidIngredients());
+        analysis.setAvoidIngredients(String.join(", ", request.getAvoidIngredients()));
+
         analysis.setVeganPreference(request.getVeganPreference());
         analysis.setCrueltyFreePreference(request.getCrueltyFreePreference());
         analysis.setEcoPreference(request.getEcoPreference());

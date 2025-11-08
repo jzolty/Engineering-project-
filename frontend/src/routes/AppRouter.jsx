@@ -24,6 +24,9 @@ import ProductDetails from "../pages/User/ProductDetails";
 import Recommendations from "../pages/User/Recommendations";
 import Account from "../pages/User/Account";
 import OAuth2RedirectHandler from "../pages/OAuth2RedirectHandler";
+import CreatePlanManual from "../pages/User/CreatePlanManual";
+import CreatePlanAuto from "../pages/User/CreatePlanAuto";
+
 
 import NotFound from "../pages/NotFound";
 
@@ -151,13 +154,23 @@ const AppRouter = () => {
                     }
                 />
                 <Route
-                    path="/products/:id"
+                    path="/user/products/:id"
                     element={
                         <PrivateRoute allowedRoles={["USER", "ADMIN"]}>
                             <ProductDetails />
                         </PrivateRoute>
                     }
                 />
+
+                    <Route
+                        path="/products/:id"
+                        element={
+                            <PrivateRoute allowedRoles={["USER", "ADMIN"]}>
+                                <ProductDetails />
+                            </PrivateRoute>
+                        }
+                    />
+
                 <Route
                     path="/user/recommendations"
                     element={
@@ -174,8 +187,26 @@ const AppRouter = () => {
                         </PrivateRoute>
                     }
                 />
+                    <Route
+                        path="/user/create-plan-manual"
+                        element={
+                            <PrivateRoute allowedRoles={["USER", "ADMIN"]}>
+                                <CreatePlanManual />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/user/create-plan-auto"
+                        element={
+                            <PrivateRoute allowedRoles={["USER", "ADMIN"]}>
+                                <CreatePlanAuto />
+                            </PrivateRoute>
+                        }
+                    />
 
-                {/* Fallback */}
+
+
+                    {/* Fallback */}
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </Router>

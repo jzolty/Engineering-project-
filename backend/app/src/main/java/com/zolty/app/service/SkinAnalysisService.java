@@ -9,13 +9,15 @@ import com.zolty.app.repository.HaveRepository;
 import com.zolty.app.repository.SkinAnalysisRepository;
 import com.zolty.app.repository.SkincarePlanRepository;
 import com.zolty.app.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SkinAnalysisService {
@@ -26,6 +28,9 @@ public class SkinAnalysisService {
     private final SkincarePlanRepository skincarePlanRepository;
     private final SkinAnalysisMapper skinAnalysisMapper;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     /**
      * Zapis nowej analizy skóry użytkownika
      */
@@ -34,20 +39,34 @@ public class SkinAnalysisService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        //  Tworzymy encję SkinAnalysis z mappera
+        log.info(" Tworzenie analizy skóry dla userId={} z danymi: {}", userId, request);
+
+        // Tworzymy i zapisujemy analizę
         SkinAnalysis analysis = skinAnalysisMapper.toEntity(request);
-        skinAnalysisRepository.save(analysis);
+        SkinAnalysis savedAnalysis = skinAnalysisRepository.saveAndFlush(analysis);
 
-        //  Tworzymy relację w tabeli "have"
+        // Pobieramy ponownie jako „managed” encję
+        SkinAnalysis managedAnalysis = skinAnalysisRepository.findById(savedAnalysis.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono zapisanej analizy"));
+
+        // Tworzymy Have — bez kaskadowego zapisu analizy
         Have have = Have.builder()
-                .skinAnalysis(analysis)
+                .skinAnalysis(managedAnalysis)
                 .user(user)
-                .skincarePlan(null) // plan zostanie utworzony później przez algorytm
+                .skincarePlan(null)
                 .build();
-        haveRepository.save(have);
 
-        return skinAnalysisMapper.toDto(analysis);
+        haveRepository.saveAndFlush(have);
+
+        log.info(" Zapisano analizę (id={}) i powiązanie Have dla usera {}", savedAnalysis.getId(), userId);
+        return skinAnalysisMapper.toDto(managedAnalysis);
     }
+
+
+
+
+
+
 
     /**
      * Pobranie wszystkich analiz danego użytkownika

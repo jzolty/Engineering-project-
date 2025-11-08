@@ -22,7 +22,8 @@ public class SkincarePlanResponse {
     private LocalDateTime updatedAt;
 
 
-    private List<Map<String, Object>> products;
+    //private List<Map<String, Object>> products;
+    private List<SkincarePlanProductResponse> products;
 
 
     private Map<String, Object> user;

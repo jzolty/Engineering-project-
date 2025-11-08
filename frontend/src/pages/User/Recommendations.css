@@ -103,3 +103,68 @@
     background-color: #f4e2d1;
     color: #8b5e3c;
 }
+
+.delete-btn {
+    background-color: #d89c97;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #b57f7a;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 10px;
+    border: 1px solid #e0d4c7;
+    background-color: #fdf7f3;
+    color: #5b4636;
+    font-size: 0.95rem;
+    margin-bottom: 1.2rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.filter-select:hover {
+    background-color: #f7ede6;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #c7a48a;
+    background-color: #fffaf8;
+}
+
+.edit-btn {
+    background-color: #b08968;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    margin-right: 0.6rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.edit-btn:hover {
+    background-color: #946f54;
+}
+
+.product-item.clickable {
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.product-item.clickable:hover {
+    background: #f7ece7;
+    border-radius: 6px;
+}

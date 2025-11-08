@@ -30,7 +30,9 @@ public class SkincarePlan {
     private Set<Have> haveRelations;
 
     private String name;
-    private String source;           // AUTO lub MANUAL (typ utworzenia)
+    @Enumerated(EnumType.STRING)
+    private PlanSource source;
+
     @Enumerated(EnumType.STRING)
     private UseTime routineTime;     // np. MORNING / EVENING
     private String note;             // notatka użytkownika

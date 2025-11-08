@@ -1,70 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/AdminNavbar";
 import productService from "../../services/productService";
-import { useNavigate } from "react-router-dom";
 import "./ManageProducts.css";
+import { useNavigate } from "react-router-dom";
 
 const ManageProducts = () => {
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [filters, setFilters] = useState({
         name: "",
         brand: "",
-        category: "",
         use_time: "",
         target_sex: "",
         is_vegan: "",
         is_cruelty_free: "",
         is_eco_certified: "",
     });
+    const [selectedCategories, setSelectedCategories] = useState([]);
 
-    const navigate = useNavigate();
-
-    const translations = {
-        MORNING: "Poranna",
-        EVENING: "Wieczorna",
-        ANY: "Dowolna",
-
+    // 🔹 Mapy tłumaczeń
+    const sexLabels = {
         FEMALE: "Kobieta",
         MALE: "Mężczyzna",
         ALLSEX: "Unisex",
+    };
 
-        TEEN: "Nastolatek",
-        YOUNG_ADULT: "Młody dorosły",
-        ADULT: "Dorosły",
-        MATURE: "Dojrzała",
-        ALL: "Każdy wiek",
+    const useTimeLabels = {
+        MORNING: "Poranna",
+        EVENING: "Wieczorna",
+        ANY: "Dowolna",
+    };
 
-        DRY: "Sucha",
-        OILY: "Tłusta",
-        SENSITIVE: "Wrażliwa",
-        COMBINATION: "Mieszana",
-        NORMAL: "Normalna",
-
-        CREAM: "Krem",
+    const categoryLabels = {
+        CLEANSER: "Preparat oczyszczający",
         SERUM: "Serum",
         TONER: "Tonik",
-        SPF: "Filtr przeciwsłoneczny",
-        CLEANSER: "Preparat oczyszczający",
+        CREAM: "Krem",
         MASK: "Maseczka",
-        MICELLAR_WATER: "Płyn micelarny",
+        SPF: "Filtr przeciwsłoneczny",
         EYE_CREAM: "Krem pod oczy",
-        OTHER: "Inny"
+        MICELLAR_WATER: "Płyn micelarny",
+        OTHER: "Inny produkt",
     };
 
-
-    // 🔹 Pobieranie produktów
+    // 🔹 Pobranie produktów
     useEffect(() => {
-        loadProducts();
+        productService
+            .getAllProducts()
+            .then((res) => setProducts(res.data))
+            .catch((err) =>
+                console.error("Błąd podczas pobierania produktów:", err)
+            );
     }, []);
-
-    const loadProducts = async () => {
-        try {
-            const response = await productService.getAllProducts();
-            setProducts(response.data);
-        } catch (error) {
-            console.error("Błąd podczas pobierania produktów:", error);
-        }
-    };
 
     // 🔹 Obsługa filtrów
     const handleFilterChange = (e) => {
@@ -75,20 +62,19 @@ const ManageProducts = () => {
         }));
     };
 
-    //  Filtrowanie po stronie frontendu
+    // 🔹 Filtrowanie produktów
     const filteredProducts = products.filter((p) => {
         return (
             (filters.name === "" ||
                 p.name.toLowerCase().includes(filters.name.toLowerCase())) &&
             (filters.brand === "" ||
                 p.brand.toLowerCase().includes(filters.brand.toLowerCase())) &&
-            (filters.category === "" ||
-                translations[p.category]?.toLowerCase().includes(filters.category.toLowerCase()) ||
-                p.category.toLowerCase().includes(filters.category.toLowerCase()))
-            &&
+            (selectedCategories.length === 0 ||
+                selectedCategories.includes(p.category)) &&
             (filters.use_time === "" || p.useTime === filters.use_time) &&
             (filters.target_sex === "" || p.targetSex === filters.target_sex) &&
-            (filters.is_vegan === "" || String(p.isVegan) === String(filters.is_vegan)) &&
+            (filters.is_vegan === "" ||
+                String(p.isVegan) === String(filters.is_vegan)) &&
             (filters.is_cruelty_free === "" ||
                 String(p.isCrueltyFree) === String(filters.is_cruelty_free)) &&
             (filters.is_eco_certified === "" ||
@@ -96,27 +82,28 @@ const ManageProducts = () => {
         );
     });
 
-    //  Ikony logiczne
+    // 🔹 Ikony logiczne
     const renderIcon = (value) => {
         if (value === true) return <span className="icon-true">✓</span>;
         if (value === false) return <span className="icon-false">✗</span>;
         return <span className="icon-unknown">•</span>;
     };
 
-    //  CRUD
+    // 🔹 Usuwanie produktu
     const handleDelete = async (id) => {
-        if (window.confirm("Czy na pewno chcesz usunąć ten produkt?")) {
-            try {
-                await productService.deleteProduct(id);
-                setProducts(products.filter((p) => p.id !== id));
-            } catch (error) {
-                console.error("Błąd przy usuwaniu produktu:", error);
-            }
+        if (!window.confirm("Czy na pewno chcesz usunąć ten produkt?")) return;
+        try {
+            await productService.deleteProduct(id);
+            setProducts((prev) => prev.filter((p) => p.id !== id));
+            alert("Produkt został usunięty.");
+        } catch (err) {
+            console.error("Błąd podczas usuwania produktu:", err);
+            alert("Nie udało się usunąć produktu.");
         }
     };
 
     return (
-        <div className="products-page">
+        <div className="manage-products-page">
             <Navbar role="admin" />
 
             <div className="products-wrapper">
@@ -139,13 +126,29 @@ const ManageProducts = () => {
                         value={filters.brand}
                         onChange={handleFilterChange}
                     />
-                    <input
-                        type="text"
-                        name="category"
-                        placeholder="Kategoria"
-                        value={filters.category}
-                        onChange={handleFilterChange}
-                    />
+
+                    <label>Kategorie</label>
+                    <div className="checkbox-category-group">
+                        {Object.entries(categoryLabels).map(([key, label]) => (
+                            <label key={key} className="checkbox-item">
+                                <input
+                                    type="checkbox"
+                                    value={key}
+                                    checked={selectedCategories.includes(key)}
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            setSelectedCategories((prev) => [...prev, key]);
+                                        } else {
+                                            setSelectedCategories((prev) =>
+                                                prev.filter((cat) => cat !== key)
+                                            );
+                                        }
+                                    }}
+                                />
+                                <span>{label}</span>
+                            </label>
+                        ))}
+                    </div>
 
                     <label>Pora dnia</label>
                     <select
@@ -168,10 +171,9 @@ const ManageProducts = () => {
                         <option value="">Wszystkie</option>
                         <option value="FEMALE">Kobieta</option>
                         <option value="MALE">Mężczyzna</option>
-                        <option value="ALLSEX">Unisex</option>
+                        <option value="ALL">Unisex</option>
                     </select>
 
-                    {/* Sekcja radiobuttonów */}
                     <div className="radio-section">
                         {[
                             { name: "is_vegan", label: "Wegański" },
@@ -217,7 +219,7 @@ const ManageProducts = () => {
                     </div>
                 </aside>
 
-                {/* Prawa sekcja - tabela */}
+                {/* Prawy panel - lista produktów */}
                 <main className="products-content">
                     <div className="header-admin">
                         <h1>Zarządzaj produktami</h1>
@@ -225,11 +227,9 @@ const ManageProducts = () => {
                             className="add-btn"
                             onClick={() => navigate("/admin/products/add")}
                         >
-                            + Dodaj produkt
+                            + Dodaj nowy produkt
                         </button>
                     </div>
-
-                    <p>Filtruj, edytuj lub usuwaj produkty.</p>
 
                     <table className="products-table">
                         <thead>
@@ -250,33 +250,33 @@ const ManageProducts = () => {
                             <tr key={p.id}>
                                 <td
                                     className="product-link"
-                                    onClick={() => navigate(`/admin/products/${p.id}`)}
+                                    onClick={() =>
+                                        navigate(`/admin/products/${p.id}`)
+                                    }
                                 >
                                     {p.name}
                                 </td>
-
                                 <td>{p.brand}</td>
-                                <td>{translations[p.category] || p.category}</td>
-
-                                <td>{translations[p.targetSex] || p.targetSex}</td>
-
-                                <td>{translations[p.useTime] || p.useTime}</td>
-
+                                <td>{categoryLabels[p.category] || p.category}</td>
+                                <td>{sexLabels[p.targetSex] || p.targetSex}</td>
+                                <td>{useTimeLabels[p.useTime] || p.useTime}</td>
                                 <td>{renderIcon(p.isVegan)}</td>
                                 <td>{renderIcon(p.isCrueltyFree)}</td>
                                 <td>{renderIcon(p.isEcoCertified)}</td>
                                 <td className="actions">
                                     <button
                                         className="edit-btn"
-                                        onClick={() => navigate(`/admin/products/${p.id}/edit`)}
+                                        onClick={() =>
+                                            navigate(`/admin/products/${p.id}/edit`)
+                                        }
                                     >
-                                    Edytuj
+                                        Edytuj
                                     </button>
                                     <button
                                         className="delete-btn"
                                         onClick={() => handleDelete(p.id)}
                                     >
-                                    Usuń
+                                        Usuń
                                     </button>
                                 </td>
                             </tr>

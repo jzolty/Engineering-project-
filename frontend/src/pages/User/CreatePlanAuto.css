@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Open+Sans:wght@400;500;600&display=swap');
+
+/* === STRUKTURA STRONY === */
+.create-plan-auto {
+    background-color: #f8f5f2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.create-plan-auto .content {
+    background-color: #fff;
+    max-width: 820px;
+    margin: 3rem auto;
+    padding: 2.5rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+/* === TYPOGRAFIA === */
+.create-plan-auto h2 {
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    color: #4b3b2a;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.create-plan-auto p {
+    color: #7a6a5a;
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+.section {
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.section h3 {
+    font-size: 1.1rem;
+    color: #4b3b2a;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.subheading {
+    font-weight: 600;
+    color: #5b3a1d;
+    margin-top: 1rem;
+    margin-bottom: 0.6rem;
+}
+
+/* === OPCJE (CHECKBOXY I RADIO) === */
+.option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: #f9f6f3;
+    border: 1px solid #e3d9cf;
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    color: #5b4636;
+    font-family: "Open Sans", sans-serif;
+}
+
+.option-item:hover {
+    background-color: #f2eae4;
+}
+
+.option-item input[type="checkbox"],
+.option-item input[type="radio"] {
+    accent-color: #a57c65;
+    width: 18px;
+    height: 18px;
+}
+
+/* Podświetlenie zaznaczonego pola */
+.option-item:has(input:checked) {
+    background-color: #e9ddd2;
+    border-color: #d2b8a3;
+}
+
+/* === MULTISELECT === */
+.create-plan-auto select[multiple] {
+    width: 100%;
+    height: 160px;
+    border-radius: 10px;
+    border: 1px solid #e3d9cf;
+    padding: 0.8rem;
+    background-color: #fff;
+    color: #4b3b2a;
+    font-size: 0.95rem;
+    font-family: "Open Sans", sans-serif;
+}
+
+/* === PRZYCISK === */
+.create-plan-auto button[type="submit"] {
+    display: block;
+    margin: 2.5rem auto 0 auto;
+    padding: 0.8rem 2.5rem;
+    background-color: #a57c65;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: "Open Sans", sans-serif;
+    font-size: 1rem;
+    transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.create-plan-auto button[type="submit"]:hover {
+    background-color: #8d6651;
+    transform: translateY(-2px);
+}
+
+.create-plan-auto button[type="submit"]:disabled {
+    background-color: #d2c0b2;
+    cursor: not-allowed;
+}
+
+/* === RESPONSYWNOŚĆ === */
+@media (max-width: 768px) {
+    .create-plan-auto .content {
+        width: 90%;
+        padding: 2rem;
+    }
+
+    .option-item {
+        font-size: 0.9rem;
+    }
+
+    .create-plan-auto h2 {
+        font-size: 1.7rem;
+    }
+
+    .create-plan-auto button[type="submit"] {
+        width: 100%;
+    }
+}
+
+/* === STYL DLA REACT-SELECT === */
+.select__control {
+    background-color: #fff !important;
+    border: 1px solid #e3d9cf !important;
+    border-radius: 10px !important;
+    font-family: "Open Sans", sans-serif;
+}
+
+.select__menu {
+    border-radius: 10px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.select__option--is-focused {
+    background-color: #f2eae4 !important;
+}
+
+.select__option--is-selected {
+    background-color: #e9ddd2 !important;
+    color: #4b3b2a !important;
+}
+
+/* === WYŚRODKOWANIE CAŁEGO FORMULARZA === */
+.manual-plan-container {
+    background-color: #fffdfc;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    max-width: 820px;
+    margin: 3rem auto;
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.manual-left form {
+    width: 100%;
+    max-width: 600px;
+}
+
+
+/* === DWIE KOLUMNY DLA CELÓW === */
+.option-group.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(250px, 1fr));
+    column-gap: 2rem;
+    row-gap: 1rem;
+    justify-content: center;
+}
+
+.option-group.goals-grid .option-item {
+    width: 100%;
+    box-sizing: border-box;
+}
+

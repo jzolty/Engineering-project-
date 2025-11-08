@@ -1,5 +1,6 @@
 package com.zolty.app.repository;
 
+import com.zolty.app.model.PlanSource;
 import com.zolty.app.model.SkincarePlan;
 import com.zolty.app.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,8 @@ public interface SkincarePlanRepository extends JpaRepository<SkincarePlan, Long
 
     // wszystkie plany danego użytkownika
     List<SkincarePlan> findByUser(User user);
+
+    List<SkincarePlan> findByUserAndSource(User user, PlanSource source);
 
     // wyszukiwanie po nazwie (np. dla walidacji duplikatów)
     boolean existsByUserAndName(User user, String name);

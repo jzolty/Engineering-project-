@@ -11,23 +11,20 @@ import lombok.*;
 @Builder
 public class Have {
 
-    // Klucz główny = FK do SkinAnalysis
     @Id
-    @Column(name = "skin_analysis_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @MapsId // PK pochodzi z skinAnalysis.id
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "skin_analysis_id", nullable = false, unique = true)
     private SkinAnalysis skinAnalysis;
 
-    // User (1) -> Have (N)
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // SkincarePlan (1) -> Have (N)
-    @ManyToOne
-    @JoinColumn(name = "skincare_plan_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "skincare_plan_id", nullable = true)
     private SkincarePlan skincarePlan;
 }
+

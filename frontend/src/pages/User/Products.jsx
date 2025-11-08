@@ -8,15 +8,16 @@ const Products = () => {
     const [filters, setFilters] = useState({
         name: "",
         brand: "",
-        category: "",
         use_time: "",
         target_sex: "",
         is_vegan: "",
         is_cruelty_free: "",
         is_eco_certified: "",
     });
+    const [selectedCategories, setSelectedCategories] = useState([]);
 
-    // 🔹 Mapy tłumaczeń dla enumów
+
+    // 🔹 Mapy tłumaczeń
     const sexLabels = {
         FEMALE: "Kobieta",
         MALE: "Mężczyzna",
@@ -29,7 +30,19 @@ const Products = () => {
         ANY: "Dowolna",
     };
 
-    // 🔹 Pobieranie produktów z backendu
+    const categoryLabels = {
+        CLEANSER: "Preparat oczyszczający",
+        SERUM: "Serum",
+        TONER: "Tonik",
+        CREAM: "Krem",
+        MASK: "Maseczka",
+        SPF: "Filtr przeciwsłoneczny",
+        EYE_CREAM: "Krem pod oczy",
+        MICELLAR_WATER: "Płyn micelarny",
+        OTHER: "Inny produkt",
+    };
+
+    // 🔹 Pobieranie produktów
     useEffect(() => {
         productService
             .getAllProducts()
@@ -51,19 +64,18 @@ const Products = () => {
         }));
     };
 
-    // 🔹 Filtrowanie po stronie frontendu
+    // 🔹 Filtrowanie produktów
     const filteredProducts = products.filter((p) => {
         return (
             (filters.name === "" ||
                 p.name.toLowerCase().includes(filters.name.toLowerCase())) &&
             (filters.brand === "" ||
                 p.brand.toLowerCase().includes(filters.brand.toLowerCase())) &&
-            (filters.category === "" ||
-                p.category.toLowerCase().includes(filters.category.toLowerCase())) &&
-            (filters.use_time === "" ||
-                p.useTime === filters.use_time) &&
-            (filters.target_sex === "" ||
-                p.targetSex === filters.target_sex) &&
+            (selectedCategories.length === 0 ||
+                selectedCategories.includes(p.category)) &&
+
+            (filters.use_time === "" || p.useTime === filters.use_time) &&
+            (filters.target_sex === "" || p.targetSex === filters.target_sex) &&
             (filters.is_vegan === "" ||
                 String(p.isVegan) === String(filters.is_vegan)) &&
             (filters.is_cruelty_free === "" ||
@@ -104,13 +116,29 @@ const Products = () => {
                         value={filters.brand}
                         onChange={handleFilterChange}
                     />
-                    <input
-                        type="text"
-                        name="category"
-                        placeholder="Kategoria"
-                        value={filters.category}
-                        onChange={handleFilterChange}
-                    />
+                    <label>Kategorie</label>
+                    <div className="checkbox-category-group">
+                        {Object.entries(categoryLabels).map(([key, label]) => (
+                            <label key={key} className="checkbox-item">
+                                <input
+                                    type="checkbox"
+                                    value={key}
+                                    checked={selectedCategories.includes(key)}
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            setSelectedCategories((prev) => [...prev, key]);
+                                        } else {
+                                            setSelectedCategories((prev) =>
+                                                prev.filter((cat) => cat !== key)
+                                            );
+                                        }
+                                    }}
+                                />
+                                <span>{label}</span>
+                            </label>
+                        ))}
+                    </div>
+
 
                     <label>Pora dnia</label>
                     <select
@@ -206,13 +234,15 @@ const Products = () => {
                                 <td
                                     className="product-link"
                                     onClick={() =>
-                                        (window.location.href = `/products/${p.id}`)
+                                        (window.location.href = `/user/products/${p.id}`)
                                     }
                                 >
                                     {p.name}
                                 </td>
                                 <td>{p.brand}</td>
-                                <td>{p.category}</td>
+                                <td>
+                                    {categoryLabels[p.category] || p.category}
+                                </td>
                                 <td>{sexLabels[p.targetSex] || p.targetSex}</td>
                                 <td>{useTimeLabels[p.useTime] || p.useTime}</td>
                                 <td>{renderIcon(p.isVegan)}</td>

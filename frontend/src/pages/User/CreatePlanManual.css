@@ -1,0 +1,161 @@
+
+
+.manual-plan-wrapper {
+    background-color: #faf8f6;
+    min-height: 100vh;
+    padding-bottom: 3rem;
+}
+
+/* Dwie kolumny: lewa szeroka (formularz + filtry), prawa - produkty */
+.manual-plan-container {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    max-width: 1350px;
+    margin: 3rem auto;
+    gap: 3rem;
+    background: #fffaf8;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 2.5rem;
+}
+
+/* LEWA STRONA */
+.manual-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Formularz */
+.manual-form {
+    border-bottom: 2px solid #f2e7e1;
+    padding-bottom: 1.5rem;
+}
+
+.manual-form h1 {
+    color: #5b4636;
+    font-family: "Playfair Display", serif;
+}
+
+.manual-form p {
+    color: #7a6a5a;
+    margin-bottom: 1rem;
+}
+
+.manual-form input,
+.manual-form textarea {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e0d4c7;
+    background-color: #fcf9f7;
+    font-size: 0.95rem;
+}
+
+.manual-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.time-switch {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.save-btn {
+    background-color: #e6b7b2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.save-btn:hover {
+    background-color: #d89c97;
+}
+
+/* FILTRY POD FORMULARZEM */
+.manual-filters {
+    background-color: #fefaf7;
+    border: 1px solid #f0e3da;
+    border-radius: 12px;
+    padding: 1.4rem 1.6rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.manual-filters h3 {
+    color: #5b4636;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.manual-filters .filters-panel {
+    width: 100%;
+}
+
+.manual-filters input,
+.manual-filters select {
+    width: 100%;
+}
+
+/* PRAWA STRONA — PRODUKTY */
+.manual-products {
+    padding-left: 1rem;
+}
+
+.manual-products h2 {
+    color: #5b4636;
+    margin-bottom: 1rem;
+}
+
+/* Siatka produktów */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.2rem;
+}
+
+.product-card {
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    color: #4a3325;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    background-color: #f9f1ec;
+    transform: translateY(-3px);
+}
+
+.product-card.selected {
+    border: 2px solid #b08968;
+    background-color: #f6e8e2;
+}
+
+.product-card h4 {
+    margin: 0.4rem 0;
+    color: #5b4636;
+}
+
+.product-card p {
+    font-size: 0.9rem;
+    color: #7a6a5a;
+}
+
+.product-card span {
+    display: block;
+    font-size: 0.8rem;
+    color: #a08675;
+    margin-top: 0.3rem;
+}
