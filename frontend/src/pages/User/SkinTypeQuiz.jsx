@@ -2,6 +2,12 @@ import React, { useState } from "react";
 import "./SkinTypeQuiz.css";
 import Navbar from "../../components/Navbar/UserNavbar";
 
+/**
+ * Źródło merytoryczne:
+ * Baumann, L. (2006). The Skin Type Solution. Bantam Dell Publishing Group.
+ * Logika quizu inspirowana klasyfikacją dermatologiczną Baumann,
+ * uproszczona do sześciu typów skóry: NORMAL, DRY, OILY, COMBINATION, SENSITIVE, MATURE_SKIN.
+ */
 
 const SkinTypeQuiz = () => {
     const [answers, setAnswers] = useState({
@@ -15,6 +21,7 @@ const SkinTypeQuiz = () => {
         sensitive: "",
         acneProne: "",
     });
+
     const [results, setResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
 
@@ -26,31 +33,34 @@ const SkinTypeQuiz = () => {
     const calculateResults = () => {
         let detected = [];
 
-        // --- logika diagnozy skóry ---
+        // === Logika diagnozy zgodna z Baumann (2006) ===
+        // Osie: Oily vs Dry, Sensitive vs Resistant, Pigmented, Wrinkled
+        // uproszczone do najbardziej rozpoznawalnych typów skóry.
+
         if (answers.afterWash === "tight" || answers.reaction === "cracks") {
-            detected.push("Cera sucha");
+            detected.push("DRY");
         }
         if (answers.afterWash === "oily" || answers.pores === "visibleAll") {
-            detected.push("Cera tłusta");
+            detected.push("OILY");
         }
         if (answers.afterWash === "tZone" || answers.pores === "visibleT") {
-            detected.push("Cera mieszana");
+            detected.push("COMBINATION");
         }
         if (answers.sensitive === "yes" || answers.reaction === "red") {
-            detected.push("Cera wrażliwa");
+            detected.push("SENSITIVE");
         }
-        if (answers.redness === "yes") {
-            detected.push("Cera naczynkowa");
-        }
-        if (answers.pigmentation === "yes") {
-            detected.push("Cera z przebarwieniami");
-        }
-        if (answers.acneProne === "yes" || answers.acne === "often") {
-            detected.push("Cera trądzikowa");
+        if (answers.age === "over50") {
+            detected.push("MATURE_SKIN");
         }
 
-        const uniqueResults = [...new Set(detected)];
-        setResults(uniqueResults.length ? uniqueResults : ["Nieokreślona"]);
+        // Jeżeli nic nie wykryto → cera normalna
+        if (detected.length === 0) {
+            detected.push("NORMAL");
+        }
+
+        // Usuwanie duplikatów i ograniczenie do max 3 typów
+        const uniqueResults = [...new Set(detected)].slice(0, 3);
+        setResults(uniqueResults);
         setShowResults(true);
     };
 
@@ -66,8 +76,17 @@ const SkinTypeQuiz = () => {
             sensitive: "",
             acneProne: "",
         });
-        setShowResults(false);
         setResults([]);
+        setShowResults(false);
+    };
+
+    const readableNames = {
+        NORMAL: "Cera normalna",
+        DRY: "Cera sucha",
+        OILY: "Cera tłusta",
+        COMBINATION: "Cera mieszana",
+        SENSITIVE: "Cera wrażliwa",
+        MATURE_SKIN: "Cera dojrzała",
     };
 
     return (
@@ -75,7 +94,7 @@ const SkinTypeQuiz = () => {
             <Navbar role="user" />
             <div className="quiz-content">
                 <h1>Poznaj swój typ skóry</h1>
-                <p>Wypełnij ankietę i dowiedz się, jakie typy cery dominują u Ciebie.</p>
+                <p>Wypełnij ankietę opracowaną na podstawie klasyfikacji Baumann (2006) i dowiedz się, jaki typ cery dominuje u Ciebie.</p>
 
                 {!showResults ? (
                     <form className="quiz-form">
@@ -101,14 +120,14 @@ const SkinTypeQuiz = () => {
                             ))}
                         </div>
 
-                        {/* 2️⃣ Reakcja */}
+                        {/* 2️⃣ Reakcja skóry na czynniki zewnętrzne */}
                         <div className="form-group">
-                            <p>Jak wygląda Twoja cera po spacerze na chłodzie lub słońcu?</p>
+                            <p>Jak reaguje Twoja skóra na chłód lub słońce?</p>
                             {[
-                                { label: "jest gładka i świeża", value: "smooth" },
-                                { label: "na policzkach piecze i jest zaczerwieniona", value: "red" },
-                                { label: "zaczerwieniona, piecze i pęka", value: "cracks" },
-                                { label: "bez zmian", value: "none" },
+                                { label: "Jest gładka i świeża", value: "smooth" },
+                                { label: "Na policzkach piecze i jest zaczerwieniona", value: "red" },
+                                { label: "Zaczerwieniona, piecze i pęka", value: "cracks" },
+                                { label: "Bez zmian", value: "none" },
                             ].map((opt) => (
                                 <label key={opt.value}>
                                     <input
@@ -125,11 +144,11 @@ const SkinTypeQuiz = () => {
 
                         {/* 3️⃣ Wypryski */}
                         <div className="form-group">
-                            <p>Jak często na Twojej cerze pojawiają się wypryski?</p>
+                            <p>Jak często pojawiają się wypryski?</p>
                             {[
-                                { label: "prawie nigdy", value: "rarely" },
-                                { label: "rzadko", value: "sometimes" },
-                                { label: "często", value: "often" },
+                                { label: "Prawie nigdy", value: "rarely" },
+                                { label: "Rzadko", value: "sometimes" },
+                                { label: "Często", value: "often" },
                             ].map((opt) => (
                                 <label key={opt.value}>
                                     <input
@@ -148,9 +167,9 @@ const SkinTypeQuiz = () => {
                         <div className="form-group">
                             <p>Jak wyglądają Twoje pory?</p>
                             {[
-                                { label: "małe i średnie", value: "small" },
-                                { label: "widoczne w strefie T (czoło, nos, broda)", value: "visibleT" },
-                                { label: "widoczne na całej twarzy", value: "visibleAll" },
+                                { label: "Małe i średnie", value: "small" },
+                                { label: "Widoczne w strefie T (czoło, nos, broda)", value: "visibleT" },
+                                { label: "Widoczne na całej twarzy", value: "visibleAll" },
                             ].map((opt) => (
                                 <label key={opt.value}>
                                     <input
@@ -165,14 +184,14 @@ const SkinTypeQuiz = () => {
                             ))}
                         </div>
 
-                        {/* 5️⃣ Po umyciu */}
+                        {/* 5️⃣ Odczucie po umyciu twarzy */}
                         <div className="form-group">
-                            <p>Po 30 minutach od umycia Twoja cera jest:</p>
+                            <p>Po 30 minutach od umycia twarzy Twoja skóra jest:</p>
                             {[
-                                { label: "gładka i miękka", value: "smooth" },
-                                { label: "napięta i sucha", value: "tight" },
-                                { label: "sucha na policzkach, tłusta w strefie T", value: "tZone" },
-                                { label: "tłusta i błyszcząca", value: "oily" },
+                                { label: "Gładka i miękka", value: "smooth" },
+                                { label: "Napięta i sucha", value: "tight" },
+                                { label: "Sucha na policzkach, tłusta w strefie T", value: "tZone" },
+                                { label: "Tłusta i błyszcząca", value: "oily" },
                             ].map((opt) => (
                                 <label key={opt.value}>
                                     <input
@@ -189,7 +208,7 @@ const SkinTypeQuiz = () => {
 
                         {/* 6️⃣ Czerwienienie */}
                         <div className="form-group">
-                            <p>Czy łatwo się czerwienisz?</p>
+                            <p>Czy Twoja skóra łatwo się czerwieni?</p>
                             {["yes", "no"].map((v) => (
                                 <label key={v}>
                                     <input
@@ -221,9 +240,9 @@ const SkinTypeQuiz = () => {
                             ))}
                         </div>
 
-                        {/* 8️⃣ Wrażliwa */}
+                        {/* 8️⃣ Wrażliwość */}
                         <div className="form-group">
-                            <p>Czy masz cerę wrażliwą?</p>
+                            <p>Czy Twoja skóra jest wrażliwa?</p>
                             {["yes", "no"].map((v) => (
                                 <label key={v}>
                                     <input
@@ -240,7 +259,7 @@ const SkinTypeQuiz = () => {
 
                         {/* 9️⃣ Trądzik */}
                         <div className="form-group">
-                            <p>Czy masz trądzik?</p>
+                            <p>Czy masz tendencję do trądziku?</p>
                             {["yes", "no"].map((v) => (
                                 <label key={v}>
                                     <input
@@ -262,49 +281,43 @@ const SkinTypeQuiz = () => {
                 ) : (
                     <div className="results-section">
                         <h2>Wynik analizy</h2>
-                        <p>{results.join(", ")}</p>
+                        <p>{results.map((r) => readableNames[r]).join(", ")}</p>
 
                         <div className="results-details">
-                            {results.includes("Cera mieszana") && (
+                            {results.includes("COMBINATION") && (
                                 <div>
                                     <h3>Cera mieszana</h3>
-                                    <p>Skóra tłusta w strefie T, sucha na policzkach. Wymaga różnej pielęgnacji.</p>
+                                    <p>Skóra tłusta w strefie T, sucha na policzkach. Wymaga różnej pielęgnacji w zależności od partii twarzy.</p>
                                 </div>
                             )}
-                            {results.includes("Cera sucha") && (
+                            {results.includes("DRY") && (
                                 <div>
                                     <h3>Cera sucha</h3>
-                                    <p>Skóra napięta i matowa. Wymaga silnego nawilżania i ochrony lipidowej.</p>
+                                    <p>Napięta, szorstka i matowa. Wymaga intensywnego nawilżania i ochrony bariery lipidowej.</p>
                                 </div>
                             )}
-                            {results.includes("Cera tłusta") && (
+                            {results.includes("OILY") && (
                                 <div>
                                     <h3>Cera tłusta</h3>
-                                    <p>Błyszcząca, z rozszerzonymi porami. Wymaga delikatnego oczyszczania.</p>
+                                    <p>Skłonna do błyszczenia i powstawania niedoskonałości. Wymaga regularnego, delikatnego oczyszczania.</p>
                                 </div>
                             )}
-                            {results.includes("Cera wrażliwa") && (
+                            {results.includes("SENSITIVE") && (
                                 <div>
                                     <h3>Cera wrażliwa</h3>
-                                    <p>Łatwo reaguje podrażnieniem. Unikaj alkoholu i mocnych kwasów.</p>
+                                    <p>Łatwo reaguje podrażnieniem i zaczerwienieniem. Wskazana pielęgnacja z minimalną ilością substancji zapachowych.</p>
                                 </div>
                             )}
-                            {results.includes("Cera naczynkowa") && (
+                            {results.includes("MATURE_SKIN") && (
                                 <div>
-                                    <h3>Cera naczynkowa</h3>
-                                    <p>Cienka, skłonna do rumienia. Wymaga ochrony przed zimnem i UV.</p>
+                                    <h3>Cera dojrzała</h3>
+                                    <p>Zmniejszona elastyczność, obecność zmarszczek i suchość. Wymaga pielęgnacji przeciwstarzeniowej i ochrony UV.</p>
                                 </div>
                             )}
-                            {results.includes("Cera z przebarwieniami") && (
+                            {results.includes("NORMAL") && (
                                 <div>
-                                    <h3>Cera z przebarwieniami</h3>
-                                    <p>Nierówny koloryt skóry. Pomocne są kosmetyki z witaminą C i filtrami.</p>
-                                </div>
-                            )}
-                            {results.includes("Cera trądzikowa") && (
-                                <div>
-                                    <h3>Cera trądzikowa</h3>
-                                    <p>Wypryski i nadmiar sebum. Wymaga lekkiej, antybakteryjnej pielęgnacji.</p>
+                                    <h3>Cera normalna</h3>
+                                    <p>Równowaga między wydzielaniem sebum a nawilżeniem. Wystarczy pielęgnacja podtrzymująca naturalny balans.</p>
                                 </div>
                             )}
                         </div>

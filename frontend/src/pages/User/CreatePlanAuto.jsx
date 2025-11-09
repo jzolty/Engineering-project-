@@ -29,7 +29,7 @@ const CreatePlanAuto = () => {
 
     const [loading, setLoading] = useState(false);
 
-    // 🔹 Pobierz zalogowanego użytkownika z tokena
+    // 🔹 Pobierz zalogowanego użytkownika
     useEffect(() => {
         const fetchUser = async () => {
             const currentUser = await getCurrentUser();
@@ -70,11 +70,9 @@ const CreatePlanAuto = () => {
 
         setLoading(true);
         try {
-            // 1️⃣ Zapis analizy skóry
             const analysis = await skinAnalysisService.createAnalysis(user.id, form);
             const analysisId = analysis.id;
 
-            // 2️⃣ Wygenerowanie planu automatycznego
             await skincarePlanService.createAutoPlan(user.id, analysisId);
 
             alert("Plan pielęgnacyjny został wygenerowany automatycznie!");
@@ -87,7 +85,6 @@ const CreatePlanAuto = () => {
         }
     };
 
-    // 🔸 Tłumaczenia enumów
     const ageGroups = {
         TEEN: "Nastolatek",
         YOUNG_ADULT: "Młody dorosły (18-30)",
@@ -157,38 +154,137 @@ const CreatePlanAuto = () => {
                         <div className="section">
                             <h3>Typ skóry (max 3):</h3>
                             <div className="option-group">
-                                {["NORMAL", "DRY", "OILY", "COMBINATION", "SENSITIVE", "MATURE_SKIN"].map(
-                                    (type) => (
-                                        <label key={type} className="option-item">
-                                            <input
-                                                type="checkbox"
-                                                checked={form.skinTypes.includes(type)}
-                                                onChange={(e) => {
-                                                    const selected = e.target.checked
-                                                        ? [...form.skinTypes, type]
-                                                        : form.skinTypes.filter((s) => s !== type);
-                                                    if (selected.length <= 3)
-                                                        setForm({ ...form, skinTypes: selected });
-                                                }}
-                                            />
-                                            <span>
-                        {{
-                            NORMAL: "Normalna",
-                            DRY: "Sucha",
-                            OILY: "Tłusta",
-                            COMBINATION: "Mieszana",
-                            SENSITIVE: "Wrażliwa",
-                            MATURE_SKIN: "Dojrzała",
-                        }[type]}
-                      </span>
-                                        </label>
-                                    )
-                                )}
+                                {[
+                                    "NORMAL",
+                                    "DRY",
+                                    "OILY",
+                                    "COMBINATION",
+                                    "SENSITIVE",
+                                    "MATURE_SKIN",
+                                ].map((type) => (
+                                    <label key={type} className="option-item">
+                                        <input
+                                            type="checkbox"
+                                            checked={form.skinTypes.includes(type)}
+                                            onChange={(e) => {
+                                                const selected = e.target.checked
+                                                    ? [...form.skinTypes, type]
+                                                    : form.skinTypes.filter((s) => s !== type);
+                                                if (selected.length <= 3)
+                                                    setForm({ ...form, skinTypes: selected });
+                                            }}
+                                        />
+                                        <span>
+                      {{
+                          NORMAL: "Normalna",
+                          DRY: "Sucha",
+                          OILY: "Tłusta",
+                          COMBINATION: "Mieszana",
+                          SENSITIVE: "Wrażliwa",
+                          MATURE_SKIN: "Dojrzała",
+                      }[type]}
+                    </span>
+                                    </label>
+                                ))}
                             </div>
                         </div>
 
-                        {/* --- Preferencje, składniki, pora dnia --- */}
-                        {/* (pozostała część formularza bez zmian) */}
+                        {/* --- Cele pielęgnacyjne --- */}
+                        <div className="section">
+                            <h3>Cele pielęgnacyjne:</h3>
+                            <Select
+                                isMulti
+                                options={goals.map((g) => ({ value: g.id, label: g.name }))}
+                                onChange={(selected) =>
+                                    setForm({
+                                        ...form,
+                                        goals: selected.map((s) => ({ id: s.value, name: s.label })),
+                                    })
+                                }
+                            />
+                        </div>
+
+                        {/* --- Preferencje --- */}
+                        <div className="section">
+                            <h3>Preferencje produktów:</h3>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={form.veganPreference}
+                                    onChange={(e) =>
+                                        setForm({ ...form, veganPreference: e.target.checked })
+                                    }
+                                />{" "}
+                                Tylko wegańskie
+                            </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={form.crueltyFreePreference}
+                                    onChange={(e) =>
+                                        setForm({ ...form, crueltyFreePreference: e.target.checked })
+                                    }
+                                />{" "}
+                                Cruelty-free
+                            </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={form.ecoPreference}
+                                    onChange={(e) =>
+                                        setForm({ ...form, ecoPreference: e.target.checked })
+                                    }
+                                />{" "}
+                                Eco-friendly
+                            </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={form.pregnant}
+                                    onChange={(e) =>
+                                        setForm({ ...form, pregnant: e.target.checked })
+                                    }
+                                />{" "}
+                                Jestem w ciąży
+                            </label>
+                        </div>
+
+                        {/* --- Składniki do unikania --- */}
+                        <div className="section">
+                            <h3>Składniki do unikania:</h3>
+                            <Select
+                                isMulti
+                                options={ingredients.map((ing) => ({
+                                    value: ing.name,
+                                    label: ing.name,
+                                }))}
+                                onChange={(selected) =>
+                                    setForm({
+                                        ...form,
+                                        avoidIngredients: selected.map((s) => s.value),
+                                    })
+                                }
+                            />
+                        </div>
+
+                        {/* --- Pora dnia --- */}
+                        <div className="section">
+                            <h3>Pora dnia:</h3>
+                            {Object.entries(useTimeLabels).map(([key, label]) => (
+                                <label key={key} className="option-item">
+                                    <input
+                                        type="radio"
+                                        name="routineTime"
+                                        value={key}
+                                        checked={form.routineTime === key}
+                                        onChange={(e) =>
+                                            setForm({ ...form, routineTime: e.target.value })
+                                        }
+                                    />
+                                    <span>{label}</span>
+                                </label>
+                            ))}
+                        </div>
 
                         <button type="submit" disabled={loading}>
                             {loading ? "Generowanie..." : "Zapisz i wygeneruj plan"}
