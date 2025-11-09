@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/UserNavbar";
 import productService from "../../services/productService";
 import skincarePlanService from "../../services/skincarePlanService";
+import { getCurrentUser } from "../../services/authService";
 import "./CreatePlanManual.css";
 import ProductSelector from "../../components/ProductSelector";
 
 const CreatePlanManual = () => {
     const navigate = useNavigate();
+    const [user, setUser] = useState(null);
     const [products, setProducts] = useState([]);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [filters, setFilters] = useState({
@@ -24,6 +26,21 @@ const CreatePlanManual = () => {
     const [note, setNote] = useState("");
     const [routineTime, setRoutineTime] = useState("MORNING");
 
+    // 🔹 Pobierz zalogowanego użytkownika
+    useEffect(() => {
+        const fetchUser = async () => {
+            const currentUser = await getCurrentUser();
+            if (!currentUser) {
+                alert("Sesja wygasła. Zaloguj się ponownie.");
+                window.location.href = "/login";
+                return;
+            }
+            setUser(currentUser);
+        };
+        fetchUser();
+    }, []);
+
+    // 🔹 Pobierz produkty
     useEffect(() => {
         productService.getAllProducts().then((res) => {
             setProducts(res.data);
@@ -58,10 +75,8 @@ const CreatePlanManual = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const userId = localStorage.getItem("userId");
-
-        if (!userId) {
-            alert("Brak userId w localStorage – upewnij się, że logowanie je zapisuje.");
+        if (!user?.id) {
+            alert("Nie udało się zidentyfikować użytkownika.");
             return;
         }
 
@@ -79,7 +94,7 @@ const CreatePlanManual = () => {
         };
 
         try {
-            const saved = await skincarePlanService.createManualPlan(userId, payload);
+            const saved = await skincarePlanService.createManualPlan(user.id, payload);
             console.log("Zapisany plan:", saved);
             alert("Plan pielęgnacyjny został zapisany!");
             navigate("/user/recommendations");
@@ -89,12 +104,10 @@ const CreatePlanManual = () => {
         }
     };
 
-
     return (
         <div className="manual-plan-wrapper">
             <Navbar role="user" />
             <div className="manual-plan-container">
-                {/* LEWA STRONA */}
                 <div className="manual-left">
                     <div className="manual-form">
                         <h1>Tworzenie planu pielęgnacyjnego</h1>
@@ -152,7 +165,6 @@ const CreatePlanManual = () => {
                         </form>
                     </div>
 
-                    {/* Filtry po formularzu */}
                     <div className="manual-filters">
                         <h3>Filtruj produkty</h3>
                         <ProductSelector
@@ -163,7 +175,6 @@ const CreatePlanManual = () => {
                     </div>
                 </div>
 
-                {/* PRAWA STRONA — produkty */}
                 <div className="manual-products">
                     <h2>Wybierz produkty</h2>
                     <div className="product-grid">

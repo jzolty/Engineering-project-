@@ -29,6 +29,8 @@ export const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("email");
+    localStorage.removeItem("sessionExpired");
+
     // 💡 od razu przekierowanie do strony głównej
     window.location.href = "/";
 };

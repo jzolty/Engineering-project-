@@ -31,8 +31,10 @@ public class RecommendationService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-        SkinAnalysis analysis = skinAnalysisRepository.findById(analysisId)
-                .orElseThrow(() -> new ResourceNotFoundException("Skin analysis not found with id: " + analysisId));
+        Have have = haveRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("No analysis found for user " + userId));
+
+        SkinAnalysis analysis = have.getSkinAnalysis();
 
         List<Product> allProducts = productRepository.findAll();
         if (allProducts.isEmpty()) {
@@ -149,12 +151,12 @@ public class RecommendationService {
         }
 
         // === 5️⃣ Tworzenie relacji HAVE ===
-        Have have = Have.builder()
+        Have newHave = Have.builder()
                 .user(user)
                 .skinAnalysis(analysis)
                 .skincarePlan(plan)
                 .build();
-        haveRepository.save(have);
+        haveRepository.save(newHave);
 
         // === 6️⃣ Zwracanie planu ===
         SkincarePlanResponse response = new SkincarePlanResponse();

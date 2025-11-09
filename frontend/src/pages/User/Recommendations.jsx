@@ -3,19 +3,21 @@ import { useNavigate } from "react-router-dom";
 
 import Navbar from "../../components/Navbar/UserNavbar";
 import skincarePlanService from "../../services/skincarePlanService";
-import EditPlanModal from "../../components/EditPlanModal"; // 🔹 dodany poprawny import
+import EditPlanModal from "../../components/EditPlanModal";
+import { getCurrentUser } from "../../services/authService";
 import "./Recommendations.css";
 
 const Recommendations = () => {
+    const [user, setUser] = useState(null);
     const [plans, setPlans] = useState([]);
     const [filteredPlans, setFilteredPlans] = useState([]);
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [filterSource, setFilterSource] = useState("ALL");
     const [loading, setLoading] = useState(true);
-    const [editingPlan, setEditingPlan] = useState(null); // 🔹 przeniesione do wnętrza komponentu
+    const [editingPlan, setEditingPlan] = useState(null);
 
-    const userId = localStorage.getItem("userId");
     const navigate = useNavigate();
+
     const categoryLabels = {
         CLEANSER: "Preparat oczyszczający",
         SERUM: "Serum",
@@ -27,18 +29,38 @@ const Recommendations = () => {
         MICELLAR_WATER: "Płyn micelarny",
         OTHER: "Inny produkt",
     };
+
     const routineTimeLabels = {
         MORNING: "Poranna",
         EVENING: "Wieczorna",
         ANY: "Dowolna",
     };
 
+    // 🔹 1️⃣ Pobierz dane zalogowanego użytkownika z tokena
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const currentUser = await getCurrentUser();
+                if (!currentUser) {
+                    alert("Sesja wygasła. Zaloguj się ponownie.");
+                    window.location.href = "/login";
+                    return;
+                }
+                setUser(currentUser);
+            } catch (err) {
+                console.error("Błąd pobierania użytkownika:", err);
+                alert("Nie udało się pobrać danych użytkownika.");
+            }
+        };
+        fetchUser();
+    }, []);
 
-    // Pobranie planów użytkownika
+    // 🔹 2️⃣ Pobierz plany użytkownika po tym, jak załaduje się `user`
     useEffect(() => {
         const fetchPlans = async () => {
+            if (!user?.id) return;
             try {
-                const data = await skincarePlanService.getPlansByUser(userId);
+                const data = await skincarePlanService.getPlansByUser(user.id);
                 const sorted = [...data].sort(
                     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
                 );
@@ -52,10 +74,11 @@ const Recommendations = () => {
                 setLoading(false);
             }
         };
-        if (userId) fetchPlans();
-    }, [userId]);
 
-    // 🟠 Filtrowanie po źródle (AUTO / MANUAL / ALL)
+        fetchPlans();
+    }, [user]);
+
+    // 🔹 3️⃣ Filtrowanie planów
     useEffect(() => {
         if (filterSource === "ALL") {
             setFilteredPlans(plans);
@@ -64,7 +87,7 @@ const Recommendations = () => {
         }
     }, [filterSource, plans]);
 
-    // 🗑️ Usuwanie planu
+    // 🔹 4️⃣ Usuwanie planu
     const handleDelete = async (planId) => {
         if (!window.confirm("Czy na pewno chcesz usunąć ten plan?")) return;
         try {
@@ -120,10 +143,10 @@ const Recommendations = () => {
                                                 plan.source?.toLowerCase() || ""
                                             }`}
                                         >
-                                            {plan.source === "AUTO"
-                                                ? "Automatyczny"
-                                                : "Ręczny"}
-                                        </span>
+                      {plan.source === "AUTO"
+                          ? "Automatyczny"
+                          : "Ręczny"}
+                    </span>
                                     </div>
                                     <div className="rec-date">
                                         {new Date(plan.createdAt).toLocaleDateString()}
@@ -158,7 +181,9 @@ const Recommendations = () => {
                             </p>
                             <p>
                                 <b>Pora dnia:</b>{" "}
-                                {routineTimeLabels[selectedPlan.routineTime] || selectedPlan.routineTime || "-"}
+                                {routineTimeLabels[selectedPlan.routineTime] ||
+                                    selectedPlan.routineTime ||
+                                    "-"}
                             </p>
 
                             {selectedPlan.note && (
@@ -174,17 +199,21 @@ const Recommendations = () => {
                                         <div
                                             key={i}
                                             className="product-item clickable"
-                                            onClick={() => navigate(`/user/products/${p.product?.id}`)}
-
+                                            onClick={() =>
+                                                navigate(`/user/products/${p.product?.id}`)
+                                            }
                                             title="Zobacz szczegóły produktu"
                                         >
                                             <p>
                                                 <b>{p.product?.name}</b> — {p.product?.brand}{" "}
-                                                <span>({categoryLabels[p.product?.category] || p.product?.category})</span>
+                                                <span>
+                          (
+                                                    {categoryLabels[p.product?.category] ||
+                                                        p.product?.category}
+                                                    )
+                        </span>
                                             </p>
-
                                         </div>
-
                                     ))
                                 ) : (
                                     <p>Brak produktów w tym planie.</p>
@@ -220,28 +249,30 @@ const Recommendations = () => {
                     onClose={() => setEditingPlan(null)}
                     onSave={async (updatedData) => {
                         try {
-                            //  Wyślij aktualizację
                             await skincarePlanService.updatePlan(editingPlan.id, updatedData);
+                            const refreshed = await skincarePlanService.getPlanById(
+                                editingPlan.id
+                            );
 
-                            //  Pobierz świeżą wersję planu z backendu
-                            const refreshed = await skincarePlanService.getPlanById(editingPlan.id);
-
-                            // Zaktualizuj stan na froncie
                             setPlans((prev) => {
-                                const updatedList = prev.map((p) => (p.id === refreshed.id ? refreshed : p));
+                                const updatedList = prev.map((p) =>
+                                    p.id === refreshed.id ? refreshed : p
+                                );
                                 return updatedList.sort(
                                     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
                                 );
                             });
 
                             setFilteredPlans((prev) => {
-                                const updatedList = prev.map((p) => (p.id === refreshed.id ? refreshed : p));
+                                const updatedList = prev.map((p) =>
+                                    p.id === refreshed.id ? refreshed : p
+                                );
                                 return updatedList.sort(
                                     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
                                 );
                             });
 
-                            setSelectedPlan(refreshed); // 🔹 teraz zobaczysz odświeżone produkty
+                            setSelectedPlan(refreshed);
                             setEditingPlan(null);
                             alert("Plan został zaktualizowany!");
                         } catch (err) {
@@ -249,7 +280,6 @@ const Recommendations = () => {
                             alert("Nie udało się zaktualizować planu.");
                         }
                     }}
-
                 />
             )}
         </div>
