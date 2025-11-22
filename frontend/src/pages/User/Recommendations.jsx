@@ -7,6 +7,10 @@ import EditPlanModal from "../../components/EditPlanModal";
 import { getCurrentUser } from "../../services/authService";
 import "./Recommendations.css";
 
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+
 const Recommendations = () => {
     const [user, setUser] = useState(null);
     const [plans, setPlans] = useState([]);
@@ -36,7 +40,7 @@ const Recommendations = () => {
         ANY: "Dowolna",
     };
 
-    // 🔹 1️⃣ Pobierz dane zalogowanego użytkownika z tokena
+    // Pobierz dane zalogowanego użytkownika z tokena
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -55,7 +59,7 @@ const Recommendations = () => {
         fetchUser();
     }, []);
 
-    // 🔹 2️⃣ Pobierz plany użytkownika po tym, jak załaduje się `user`
+    //  Pobierz plany użytkownika po tym, jak załaduje się `user`
     useEffect(() => {
         const fetchPlans = async () => {
             if (!user?.id) return;
@@ -78,7 +82,7 @@ const Recommendations = () => {
         fetchPlans();
     }, [user]);
 
-    // 🔹 3️⃣ Filtrowanie planów
+    // Filtrowanie planów
     useEffect(() => {
         if (filterSource === "ALL") {
             setFilteredPlans(plans);
@@ -87,7 +91,7 @@ const Recommendations = () => {
         }
     }, [filterSource, plans]);
 
-    // 🔹 4️⃣ Usuwanie planu
+    //  Usuwanie planu
     const handleDelete = async (planId) => {
         if (!window.confirm("Czy na pewno chcesz usunąć ten plan?")) return;
         try {
@@ -102,6 +106,95 @@ const Recommendations = () => {
             alert("Nie udało się usunąć planu.");
         }
     };
+
+    //  Generowanie PDF dla wybranego planu
+    const generatePlanPDF = (plan) => {
+        if (!plan) {
+            alert("Brak danych planu.");
+            return;
+        }
+
+        const doc = new jsPDF({ encoding: "UTF-8" });
+
+        // Pomocnicza funkcja zamieniająca polskie znaki (bo jsPDF ma z tym problem)
+        const fixPL = (text) =>
+            text
+                ?.replaceAll("ą", "a").replaceAll("ć", "c").replaceAll("ę", "e")
+                .replaceAll("ł", "l").replaceAll("ń", "n").replaceAll("ó", "o")
+                .replaceAll("ś", "s").replaceAll("ź", "z").replaceAll("ż", "z")
+                .replaceAll("Ą", "A").replaceAll("Ć", "C").replaceAll("Ę", "E")
+                .replaceAll("Ł", "L").replaceAll("Ń", "N").replaceAll("Ó", "O")
+                .replaceAll("Ś", "S").replaceAll("Ź", "Z").replaceAll("Ż", "Z");
+
+        // 🔹 Nagłówek
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text(fixPL(`Plan pielegnacyjny: ${plan.name || "Bez nazwy"}`), 14, 20);
+
+        // 🔹 Informacje o planie
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        doc.text(fixPL(`Typ: ${plan.source === "AUTO" ? "Automatyczny" : "Reczny"}`), 14, 30);
+        doc.text(
+            fixPL(
+                `Pora dnia: ${
+                    plan.routineTime === "MORNING"
+                        ? "Poranna"
+                        : plan.routineTime === "EVENING"
+                            ? "Wieczorna"
+                            : "Dowolna"
+                }`
+            ),
+            14,
+            37
+        );
+        doc.text(`Utworzono: ${new Date(plan.createdAt).toLocaleString()}`, 14, 44);
+        if (plan.updatedAt) {
+            doc.text(`Ostatnia aktualizacja: ${new Date(plan.updatedAt).toLocaleString()}`, 14, 51);
+        }
+
+        // 🔹 Produkty w planie
+        const tableData = (plan.products || []).map((p) => [
+            fixPL(p.product?.name || "—"),
+            fixPL(p.product?.brand || "—"),
+            fixPL(
+                p.product?.category === "CREAM"
+                    ? "Krem"
+                    : p.product?.category === "SERUM"
+                        ? "Serum"
+                        : p.product?.category === "CLEANSER"
+                            ? "Zel do mycia"
+                            : p.product?.category === "TONER"
+                                ? "Tonik"
+                                : p.product?.category === "MASK"
+                                    ? "Maseczka"
+                                    : p.product?.category === "SPF"
+                                        ? "Filtr przeciwsłoneczny"
+                                        : "Inny"
+            ),
+        ]);
+
+        autoTable(doc, {
+            startY: 65,
+            head: [[fixPL("Produkt"), fixPL("Marka"), fixPL("Typ")]],
+            body: tableData,
+            styles: { fontSize: 10, cellPadding: 3 },
+            headStyles: {
+                fillColor: [245, 228, 218],
+                textColor: [75, 50, 30],
+            },
+        });
+
+        //  Stopka z datą generowania
+        const now = new Date();
+        const formatted = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+        doc.setFontSize(10);
+        doc.text(fixPL(`Wygenerowano: ${formatted}`), 14, doc.internal.pageSize.height - 10);
+
+        // Zapis PDF
+        doc.save(`PlanPielegnacyjny_${plan.name || "bez_nazwy"}.pdf`);
+    };
+
 
     if (loading) return <p style={{ textAlign: "center" }}>Ładowanie planów...</p>;
 
@@ -173,6 +266,7 @@ const Recommendations = () => {
                                     : "—"}
                             </p>
 
+
                             <p>
                                 <b>Typ:</b>{" "}
                                 {selectedPlan.source === "AUTO"
@@ -234,6 +328,15 @@ const Recommendations = () => {
                                 >
                                     Usuń plan
                                 </button>
+
+                                <button
+                                    className="report-btn"
+                                    onClick={() => generatePlanPDF(selectedPlan)}
+                                    style={{ marginLeft: "0.5rem", backgroundColor: "#d8b8a3" }}
+                                >
+                                    Pobierz plan PDF
+                                </button>
+
                             </div>
                         </>
                     ) : (

@@ -36,6 +36,11 @@ const getPlanById = async (planId) => {
     return res.data;
 };
 
+const getAllPlans = async () => {
+    const res = await api.get(`${API_URL}/all`);
+    return res.data;
+};
+
 const skincarePlanService = {
     createManualPlan,
     createAutoPlan,
@@ -43,6 +48,7 @@ const skincarePlanService = {
     getPlanById,
     deletePlan,
     updatePlan,
+    getAllPlans,
 };
 
 export default skincarePlanService;

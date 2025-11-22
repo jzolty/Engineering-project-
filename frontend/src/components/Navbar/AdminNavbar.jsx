@@ -12,8 +12,9 @@ const AdminNavbar = () => {
                 <Link to="/admin">Panel</Link>
                 <Link to="/admin/users">Użytkownicy</Link>
                 <Link to="/admin/manage-products">Produkty</Link>
+                <Link to="/admin/manage-plans">Plany pielęgnacji użytkowników</Link>
                 <Link to="/admin/manage-rules">Reguły</Link>
-                {/*<Link to="/admin/reports">Raporty</Link>*/}
+
                 <Link to="/admin/account">Konto</Link>
 
                 {/* 🔒 poprawione */}

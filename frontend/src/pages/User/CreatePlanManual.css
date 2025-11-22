@@ -1,161 +1,145 @@
-
-
 .manual-plan-wrapper {
-    background-color: #faf8f6;
-    min-height: 100vh;
-    padding-bottom: 3rem;
+    background-color: #faf8f6 !important;
+    min-height: 100vh !important;
+    padding-bottom: 3rem !important;
 }
 
-/* Dwie kolumny: lewa szeroka (formularz + filtry), prawa - produkty */
+/* --- GŁÓWNY UKŁAD: dwie kolumny obok siebie --- */
 .manual-plan-container {
-    display: grid;
-    grid-template-columns: 40% 60%;
-    max-width: 1350px;
-    margin: 3rem auto;
-    gap: 3rem;
-    background: #fffaf8;
-    border-radius: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    padding: 2.5rem;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 3rem !important;
+    max-width: 1400px !important;
+    margin: 3rem auto !important;
+    padding: 2rem 3rem !important;
+    background: #fffaf8 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
 }
 
-/* LEWA STRONA */
+/* --- LEWA KOLUMNA --- */
 .manual-left {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    width: 33% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2rem !important;
 }
 
-/* Formularz */
+/* --- FORMULARZ PLANU --- */
 .manual-form {
-    border-bottom: 2px solid #f2e7e1;
-    padding-bottom: 1.5rem;
+    background-color: #fffdfb !important;
+    border: 1px solid #f0e3da !important;
+    border-radius: 12px !important;
+    padding: 1.8rem !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
 }
 
 .manual-form h1 {
-    color: #5b4636;
-    font-family: "Playfair Display", serif;
+    color: #5b4636 !important;
+    font-family: "Playfair Display", serif !important;
+    margin-bottom: 0.5rem !important;
 }
 
 .manual-form p {
-    color: #7a6a5a;
-    margin-bottom: 1rem;
+    color: #7a6a5a !important;
+    margin-bottom: 1rem !important;
 }
 
 .manual-form input,
 .manual-form textarea {
-    width: 100%;
-    padding: 0.6rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    border: 1px solid #e0d4c7;
-    background-color: #fcf9f7;
-    font-size: 0.95rem;
+    width: 100% !important;
+    padding: 0.6rem 0.8rem !important;
+    margin-bottom: 1rem !important;
+    border-radius: 8px !important;
+    border: 1px solid #e0d4c7 !important;
+    background-color: #fcf9f7 !important;
+    font-size: 0.95rem !important;
 }
 
 .manual-form textarea {
-    min-height: 80px;
-    resize: vertical;
+    min-height: 80px !important;
+    resize: vertical !important;
 }
 
 .time-switch {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.2rem;
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-bottom: 1.2rem !important;
 }
 
 .save-btn {
-    background-color: #e6b7b2;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.3s;
+    background-color: #e6b7b2 !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    font-size: 1rem !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    transition: 0.3s !important;
+    width: 100% !important;
 }
 
 .save-btn:hover {
-    background-color: #d89c97;
+    background-color: #d89c97 !important;
 }
 
-/* FILTRY POD FORMULARZEM */
+/* --- FILTRY --- */
 .manual-filters {
-    background-color: #fefaf7;
-    border: 1px solid #f0e3da;
-    border-radius: 12px;
-    padding: 1.4rem 1.6rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    background-color: #fffdfb !important;
+    border: 1px solid #f0e3da !important;
+    border-radius: 12px !important;
+    padding: 1.8rem !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
 }
 
 .manual-filters h3 {
-    color: #5b4636;
-    font-size: 1.15rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
+    color: #5b4636 !important;
+    font-size: 1.15rem !important;
+    margin-bottom: 1rem !important;
+    font-weight: 600 !important;
 }
 
-.manual-filters .filters-panel {
-    width: 100%;
-}
-
-.manual-filters input,
-.manual-filters select {
-    width: 100%;
-}
-
-/* PRAWA STRONA — PRODUKTY */
+/* --- PRAWA KOLUMNA: PRODUKTY --- */
 .manual-products {
-    padding-left: 1rem;
+    width: 67% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
 }
 
 .manual-products h2 {
-    color: #5b4636;
-    margin-bottom: 1rem;
+    color: #5b4636 !important;
+    margin-bottom: 1rem !important;
+    font-weight: 600 !important;
 }
 
-/* Siatka produktów */
+/* --- SIATKA PRODUKTÓW --- */
 .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.2rem;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)) !important;
+    gap: 1.5rem !important;
 }
 
 .product-card {
-    background-color: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: 1rem;
-    text-align: center;
-    color: #4a3325;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-    cursor: pointer;
+    background-color: #fff !important;
+    border: 1px solid #eee !important;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    text-align: center !important;
+    color: #4a3325 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
 }
 
 .product-card:hover {
-    background-color: #f9f1ec;
-    transform: translateY(-3px);
+    background-color: #f9f1ec !important;
+    transform: translateY(-3px) !important;
 }
 
 .product-card.selected {
-    border: 2px solid #b08968;
-    background-color: #f6e8e2;
-}
-
-.product-card h4 {
-    margin: 0.4rem 0;
-    color: #5b4636;
-}
-
-.product-card p {
-    font-size: 0.9rem;
-    color: #7a6a5a;
-}
-
-.product-card span {
-    display: block;
-    font-size: 0.8rem;
-    color: #a08675;
-    margin-top: 0.3rem;
+    border: 2px solid #b08968 !important;
+    background-color: #f6e8e2 !important;
 }

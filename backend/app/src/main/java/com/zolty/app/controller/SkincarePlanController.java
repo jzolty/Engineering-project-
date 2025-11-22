@@ -30,7 +30,7 @@ public class SkincarePlanController {
         );
     }
 
-    // 🔹 (Zostawisz to później dla auto-planów na podstawie analizy)
+
     @PostMapping("/user/{userId}/analysis/{analysisId}/auto")
     public ResponseEntity<SkincarePlanResponse> createAutoPlan(
             @PathVariable Long userId,
@@ -68,5 +68,12 @@ public class SkincarePlanController {
     ) {
         return ResponseEntity.ok(skincarePlanService.updatePlan(planId, request));
     }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<SkincarePlanResponse>> getAllPlans() {
+        return ResponseEntity.ok(skincarePlanService.getAllPlans());
+    }
+
 
 }

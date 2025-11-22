@@ -157,6 +157,13 @@ public class SkincarePlanService {
     }
 
 
+    public List<SkincarePlanResponse> getAllPlans() {
+        return skincarePlanRepository.findAll()
+                .stream()
+                .map(skincarePlanMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
 
 
 }

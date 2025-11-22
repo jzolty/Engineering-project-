@@ -11,7 +11,7 @@ const UserNavbar = () => {
             <div className="navbar-links">
                 <Link to="/user">Panel</Link>
                 <Link to="/user/skin-type">Analiza skóry</Link>
-                <Link to="/user/recommendations">Rekomendacje</Link>
+                <Link to="/user/recommendations">Moje plany pielęgnacji</Link>
                 <Link to="/user/products">Produkty</Link>
                 <Link to="/user/account">Konto</Link>
 

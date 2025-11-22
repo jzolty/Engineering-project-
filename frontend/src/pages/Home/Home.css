@@ -147,3 +147,51 @@
     width: 20px;
     height: 20px;
 }
+
+.home-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4rem;
+    width: 80%;
+    max-width: 1200px;
+    z-index: 1;
+}
+
+/* Lewa kolumna z tekstem */
+.info-section {
+    flex: 1;
+    color: #5a3a2b;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(165, 124, 101, 0.15);
+    backdrop-filter: blur(6px);
+}
+
+.info-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #6b3e2e;
+}
+
+.info-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info-section li {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    position: relative;
+    padding-left: 25px;
+}
+
+.info-section li::before {
+    content: "✓";
+    color: #8b5e3c;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}

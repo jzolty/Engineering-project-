@@ -11,9 +11,9 @@ import ManageRules from "../pages/Admin/ManageRules";
 import AddProduct from "../pages/Admin/AddProduct";
 import UserList from "../pages/Admin/UserList";
 import AdminProductDetails from "../pages/Admin/AdminProductDetails";
-
+import ManagePlans from "../pages/Admin/ManagePlans";
 import EditProduct from "../pages/Admin/EditProduct";
-
+import AdminPlanDetails from "../pages/Admin/AdminPlanDetails";
 
 
 import UserDashboard from "../pages/User/UserDashboard";
@@ -94,7 +94,27 @@ const AppRouter = () => {
                         </PrivateRoute>
                     }
                 />
-                <Route
+
+                    <Route
+                        path="/admin/plans/:id"
+                        element={
+                            <PrivateRoute allowedRoles={["ADMIN"]}>
+                                <AdminPlanDetails />
+                            </PrivateRoute>
+                        }
+                    />
+
+
+                    <Route
+                        path="/admin/manage-plans"
+                        element={
+                            <PrivateRoute allowedRoles={["ADMIN"]}>
+                                <ManagePlans />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    <Route
                     path="/admin/products/add"
                     element={
                         <PrivateRoute allowedRoles={["ADMIN"]}>

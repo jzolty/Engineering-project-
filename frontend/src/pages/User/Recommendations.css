@@ -168,3 +168,18 @@
     background: #f7ece7;
     border-radius: 6px;
 }
+
+.report-btn {
+    background-color: #d8b8a3;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.report-btn:hover {
+    background-color: #c9a38d;
+}
