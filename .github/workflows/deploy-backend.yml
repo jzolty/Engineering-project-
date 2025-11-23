@@ -1,0 +1,59 @@
+name: Deploy Backend to Azure Container Apps
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "backend/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.SKincareAPP_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.SKincareAPP_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.SKincareAPP_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to Azure Container Registry
+        run: |
+          echo "${{ secrets.SKincareAPP_REGISTRY_PASSWORD }}" | docker login skincare.azurecr.io -u ${{ secrets.SKincareAPP_REGISTRY_USERNAME }} --password-stdin
+
+      - name: Build backend JAR
+        working-directory: backend/app
+        run: mvn -q -DskipTests clean package
+
+      - name: Build Docker image
+        run: |
+          docker build -f backend/app/Dockerfile -t skincare.azurecr.io/skincare-app:${{ github.sha }} backend/app
+
+      - name: Push Docker image
+        run: |
+          docker push skincare.azurecr.io/skincare-app:${{ github.sha }}
+
+      - name: Deploy to Azure Container Apps
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az containerapp update \
+              --name skincare-app \
+              --resource-group skincare \
+              --image skincare.azurecr.io/skincare-app:${{ github.sha }}
