@@ -37,7 +37,18 @@ public class SecurityConfig {
                        // .requestMatchers("/api/auth/**", "/login/**", "/oauth2/**").permitAll()
                         .requestMatchers("/api/auth/**", "/api/ingredients/**", "/api/goals/**", "/api/rules/**", "/api/products/**",
                                 "api/enums/**", "api/rules/**", "api/skincare-plans/**", "api/recommendations/**" ,
-                                "api/skin-analysis/**", "api/have/**").permitAll()
+                                "api/skin-analysis/**", "api/have/**", "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/swagger-ui.html").permitAll()
+
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/login/**",
+                                "/oauth2/**"
+                        ).permitAll()
+
+
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
