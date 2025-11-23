@@ -41,7 +41,12 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f frontend/Dockerfile -t skincare.azurecr.io/skincare-frontend:${{ github.sha }} frontend
+          docker build \
+          -f frontend/Dockerfile \
+          -t skincare.azurecr.io/skincare-frontend:${{ github.sha }} \
+          --build-arg REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} \
+          --build-arg REACT_APP_GOOGLE_AUTH_URL=${{ secrets.REACT_APP_GOOGLE_AUTH_URL }} \
+          frontend
 
       - name: Push Docker image
         run: |
