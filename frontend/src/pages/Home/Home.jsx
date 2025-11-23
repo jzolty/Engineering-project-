@@ -4,7 +4,9 @@ import { login } from "../../services/authService";
 import api from "../../services/axiosConfig";
 import "./Home.css";
 
-const GOOGLE_AUTH_URL = "http://localhost:8080/oauth2/authorization/google";
+//const GOOGLE_AUTH_URL = "http://localhost:8080/oauth2/authorization/google";
+const GOOGLE_AUTH_URL = process.env.REACT_APP_GOOGLE_AUTH_URL;
+
 
 const Home = () => {
     const [email, setEmail] = useState("");
