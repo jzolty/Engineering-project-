@@ -10,6 +10,8 @@ import com.zolty.app.repository.UserRepository;
 import com.zolty.app.service.AuthService;
 import com.zolty.app.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +29,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+        "http://localhost:3000",
+        "https://skincare-frontend.mangowave-5deeba63.swedencentral.azurecontainerapps.io"
+})
 
 public class AuthController {
 
@@ -35,6 +40,10 @@ public class AuthController {
     UserRepository userRepository;
     UserMapper userMapper;
     SecretKey secretKey;
+
+    ///
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     // Wstrzyknięcie AuthService do konstruktora
     public AuthController(AuthService authService, UserRepository userRepository, UserMapper userMapper,SecretKey secretKey) {
@@ -113,7 +122,10 @@ public class AuthController {
 
         String token = authService.generateToken(user);
 
-        String redirectUrl = "http://localhost:3000/oauth2/success?token=" + token + "&role=" + user.getRole();
+       // String redirectUrl = "http://localhost:3000/oauth2/success?token=" + token + "&role=" + user.getRole();
+        String redirectUrl =
+                frontendUrl + "/oauth2/success?token=" + token + "&role=" + user.getRole();
+
         System.out.println("Redirect URL: " + redirectUrl); // <-- tu patrzymy w logi
         response.sendRedirect(redirectUrl);
     }
