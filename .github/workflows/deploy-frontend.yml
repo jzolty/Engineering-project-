@@ -31,6 +31,14 @@ jobs:
         run: |
           echo "${{ secrets.SKINCAREFRONTEND_REGISTRY_PASSWORD }}" | docker login skincare.azurecr.io -u ${{ secrets.SKINCAREFRONTEND_REGISTRY_USERNAME }} --password-stdin
 
+      - name: Build Frontend (React)
+        run: |
+          cd frontend
+          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" >> .env.production
+          echo "REACT_APP_GOOGLE_AUTH_URL=${{ secrets.REACT_APP_GOOGLE_AUTH_URL }}" >> .env.production
+          npm install
+          npm run build
+
       - name: Build Docker image
         run: |
           docker build -f frontend/Dockerfile -t skincare.azurecr.io/skincare-frontend:${{ github.sha }} frontend
