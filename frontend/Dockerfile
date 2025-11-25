@@ -7,19 +7,17 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-
-# odbieramy zmienne z Azure
-ARG REACT_APP_API_URL
-ARG REACT_APP_GOOGLE_AUTH_URL
-ENV REACT_APP_API_URL=$REACT_APP_API_URL
-ENV REACT_APP_GOOGLE_AUTH_URL=$REACT_APP_GOOGLE_AUTH_URL
-
-
 RUN npm run build
 
-# --- Static server stage ---
+# --- Run stage (NGINX) ---
 FROM nginx:alpine
+
+# usuń domyślną zawartość nginx
+RUN rm -rf /usr/share/nginx/html/*
+
+# skopiuj statyczną aplikację React do katalogu nginx
 COPY --from=build /app/build /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 3000
+
 CMD ["nginx", "-g", "daemon off;"]

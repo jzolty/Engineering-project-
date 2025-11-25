@@ -17,7 +17,7 @@ import AdminPlanDetails from "../pages/Admin/AdminPlanDetails";
 
 
 import UserDashboard from "../pages/User/UserDashboard";
-import SkinAnalysis from "../pages/User/SkinAnalysis";
+
 import SkinTypeQuiz from "../pages/User/SkinTypeQuiz";
 import Products from "../pages/User/Products";
 import ProductDetails from "../pages/User/ProductDetails";
@@ -149,14 +149,7 @@ const AppRouter = () => {
                         </PrivateRoute>
                     }
                 />
-                <Route
-                    path="/user/skin-analysis"
-                    element={
-                        <PrivateRoute allowedRoles={["USER", "ADMIN"]}>
-                            <SkinAnalysis />
-                        </PrivateRoute>
-                    }
-                />
+
                 <Route
                     path="/user/skin-type"
                     element={

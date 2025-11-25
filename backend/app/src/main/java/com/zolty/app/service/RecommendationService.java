@@ -31,10 +31,12 @@ public class RecommendationService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-        Have have = haveRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("No analysis found for user " + userId));
+//        Have have = haveRepository.findByUserId(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("No analysis found for user " + userId));
 
-        SkinAnalysis analysis = have.getSkinAnalysis();
+        SkinAnalysis analysis = skinAnalysisRepository.findById(analysisId)
+                .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono analizy skóry"));
+
 
         List<Product> allProducts = productRepository.findAll();
         if (allProducts.isEmpty()) {
@@ -49,8 +51,15 @@ public class RecommendationService {
                 .filter(p -> analysis.getCrueltyFreePreference() == null || !analysis.getCrueltyFreePreference() || Boolean.TRUE.equals(p.getIsCrueltyFree()))
                 .filter(p -> analysis.getEcoPreference() == null || !analysis.getEcoPreference() || Boolean.TRUE.equals(p.getIsEcoCertified()))
                 .filter(p -> !Boolean.TRUE.equals(analysis.getIsPregnant()) || !Boolean.TRUE.equals(p.getNotRecommendedDuringPregnancy()))
-                .filter(p -> p.getTargetSex() == Sex.ALLSEX || p.getTargetSex() == analysis.getSex())
-                .filter(p -> p.getTargetAgeGroup() == AgeGroup.ALL || p.getTargetAgeGroup() == analysis.getAgeGroup())
+                .filter(p -> {
+                    if (analysis.getAgeGroup() == AgeGroup.ALL) return true;
+                    return p.getTargetAgeGroup() == AgeGroup.ALL || p.getTargetAgeGroup() == analysis.getAgeGroup();
+                })
+                .filter(p -> {
+                    if (analysis.getSex() == Sex.ALLSEX) return true;
+                    return p.getTargetSex() == Sex.ALLSEX || p.getTargetSex() == analysis.getSex();
+                })
+
                 .collect(Collectors.toList());
 
         if (filteredProducts.isEmpty()) {

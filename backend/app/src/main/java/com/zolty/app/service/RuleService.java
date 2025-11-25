@@ -42,13 +42,21 @@ public class RuleService {
         if (exists) {
             throw new ConflictException("Taka reguła już istnieje (niezależnie od kolejności składników)");
         }
+        //ustawienie punktów na podstawie typu reguły
+        int calculatedPoints = 0;
+        if (request.getRuleType() == RuleType.BENEFICIAL) {
+            calculatedPoints = 10;
+        } else if (request.getRuleType() == RuleType.CONFLICT) {
+            calculatedPoints = -10;
+        }
+
         // Utwórz nową regułę
         Rule rule = Rule.builder()
                 .ruleType(request.getRuleType())
-                .points(request.getPoints())
+                .points(calculatedPoints)
                 .build();
 
-        // Utwórz relację (BEZ ustawiania ID ręcznie!)
+        // Utwórz relację
         RuleIngredient relation = RuleIngredient.builder()
                 .id(new RuleIngredientId())
                 .rule(rule)
@@ -89,7 +97,11 @@ public class RuleService {
                 .orElseThrow(() -> new ResourceNotFoundException("Rule not found with id: " + id));
 
         rule.setRuleType(request.getRuleType());
-        rule.setPoints(request.getPoints());
+        if (request.getRuleType() == RuleType.BENEFICIAL) {
+            rule.setPoints(10);
+        } else if (request.getRuleType() == RuleType.CONFLICT) {
+            rule.setPoints(-10);
+        }
 
         ruleRepository.save(rule);
         return ruleMapper.toDto(rule);

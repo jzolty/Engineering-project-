@@ -42,8 +42,9 @@ public class AuthController {
     SecretKey secretKey;
 
     ///
-    @Value("${app.frontend.url}")
+    @Value("${FRONTEND_URL:http://localhost:3000}")
     private String frontendUrl;
+
 
     // Wstrzyknięcie AuthService do konstruktora
     public AuthController(AuthService authService, UserRepository userRepository, UserMapper userMapper,SecretKey secretKey) {

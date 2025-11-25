@@ -20,6 +20,7 @@ public interface HaveRepository extends JpaRepository<Have, Long> {
     // znajdź relację po planie pielęgnacyjnym
     List<Have> findBySkincarePlan_Id(Long skincarePlanId);
 
-    Optional<Have> findByUserId(Long userId);
+
+
 
 }

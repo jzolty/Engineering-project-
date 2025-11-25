@@ -5,8 +5,6 @@ import lombok.Getter;
 @Getter
 public enum RuleType {
     BENEFICIAL("Korzyść"),
-    HARMFUL("Szkodliwa interakcja"),
-    SYNERGY("Synergia"),
     CONFLICT("Konflikt");
 
     private final String displayName;

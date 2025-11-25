@@ -1,7 +1,7 @@
 services:
-  postgres:
+  db:
     image: postgres:15
-    container_name: skincare-postgres
+    container_name: skincare-db
     restart: always
     environment:
       POSTGRES_DB: skincare
@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
 
   backend:
     build:
@@ -19,11 +19,14 @@ services:
     container_name: skincare-backend
     restart: always
     depends_on:
-      - postgres
+      - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/skincare
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/skincare
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      FRONTEND_URL: http://localhost:3000
+
+
     ports:
       - "8080:8080"
 
@@ -39,4 +42,4 @@ services:
       - "3000:80"
 
 volumes:
-  pgdata:
+  db_data:

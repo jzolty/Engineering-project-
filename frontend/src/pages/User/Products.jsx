@@ -21,7 +21,7 @@ const Products = () => {
     const sexLabels = {
         FEMALE: "Kobieta",
         MALE: "Mężczyzna",
-        ALL: "Unisex",
+        ALLSEX: "Dla każdego",
     };
 
     const useTimeLabels = {

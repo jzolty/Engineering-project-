@@ -17,7 +17,7 @@ const ManageRules = () => {
         ingredientAId: "",
         ingredientBId: "",
         ruleType: "BENEFICIAL",
-        points: 0,
+
     });
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
@@ -27,10 +27,6 @@ const ManageRules = () => {
         switch (type) {
             case "Korzyść":
                 return "BENEFICIAL";
-            case "Szkodliwa interakcja":
-                return "HARMFUL";
-            case "Synergia":
-                return "SYNERGY";
             case "Konflikt":
                 return "CONFLICT";
             default:
@@ -42,10 +38,7 @@ const ManageRules = () => {
         switch (type) {
             case "BENEFICIAL":
                 return "Korzyść";
-            case "HARMFUL":
-                return "Szkodliwa interakcja";
-            case "SYNERGY":
-                return "Synergia";
+
             case "CONFLICT":
                 return "Konflikt";
             default:
@@ -94,9 +87,8 @@ const ManageRules = () => {
                 ingredientAId: "",
                 ingredientBId: "",
                 ruleType: "BENEFICIAL",
-                points: 0,
             });
-            setMessage("✅ Reguła została dodana.");
+            setMessage("Reguła została dodana.");
         } catch (error) {
             setMessage(
                 " " +
@@ -153,7 +145,7 @@ const ManageRules = () => {
 
                 {message && <p className="manage-rules-message">{message}</p>}
 
-                {/* 🔹 Formularz dodawania reguły */}
+                {/*  Formularz dodawania reguły */}
                 <div className="add-rule-section">
                     <h4>Dodaj nową regułę</h4>
                     <div className="add-rule-form">
@@ -192,19 +184,10 @@ const ManageRules = () => {
                             }
                         >
                             <option value="BENEFICIAL">Korzyść</option>
-                            <option value="HARMFUL">Szkodliwa interakcja</option>
-                            <option value="SYNERGY">Synergia</option>
                             <option value="CONFLICT">Konflikt</option>
                         </select>
 
-                        <input
-                            type="number"
-                            value={newRule.points}
-                            onChange={(e) =>
-                                setNewRule({ ...newRule, points: parseInt(e.target.value) })
-                            }
-                            placeholder="Punkty"
-                        />
+
 
                         <button className="add-btn" onClick={handleAddRule}>
                             <FaPlus /> Dodaj regułę
@@ -212,7 +195,7 @@ const ManageRules = () => {
                     </div>
                 </div>
 
-                {/* 🔹 Tabela reguł */}
+                {/*  Tabela reguł */}
                 <div className="rules-table-wrapper">
                     <table className="rules-table">
                         <thead>
@@ -220,7 +203,7 @@ const ManageRules = () => {
                             <th>Składnik A</th>
                             <th>Składnik B</th>
                             <th>Typ relacji</th>
-                            <th>Punkty</th>
+
                             <th>Akcje</th>
                         </tr>
                         </thead>
@@ -236,6 +219,7 @@ const ManageRules = () => {
                                 <tr key={rule.id}>
                                     <td>{rule.ingredientA}</td>
                                     <td>{rule.ingredientB}</td>
+
                                     <td>
                                         <select
                                             value={mapPolishToEnum(rule.ruleType)}
@@ -248,24 +232,13 @@ const ManageRules = () => {
                                             className="rule-type-dropdown"
                                         >
                                             <option value="BENEFICIAL">Korzyść</option>
-                                            <option value="HARMFUL">Szkodliwa interakcja</option>
-                                            <option value="SYNERGY">Synergia</option>
                                             <option value="CONFLICT">Konflikt</option>
                                         </select>
                                     </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={rule.points}
-                                            onChange={(e) =>
-                                                handleEditRule(rule.id, {
-                                                    ...rule,
-                                                    points: parseInt(e.target.value),
-                                                })
-                                            }
-                                            className="points-input"
-                                        />
-                                    </td>
+
+                                    {/* WYŚWIETLANIE PUNKTÓW (bez możliwości edycji) */}
+                                    {/*<td>{rule.points}</td>*/}
+
                                     <td className="actions">
                                         <FaTrashAlt
                                             className="delete-icon"
@@ -277,6 +250,7 @@ const ManageRules = () => {
                             ))
                         )}
                         </tbody>
+
                     </table>
                 </div>
             </div>

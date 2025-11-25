@@ -13,6 +13,7 @@ const CreatePlanAuto = () => {
 
     const [goals, setGoals] = useState([]);
     const [ingredients, setIngredients] = useState([]);
+    const MAX_GOALS = 3;
 
     const [form, setForm] = useState({
         sex: "",
@@ -100,10 +101,11 @@ const CreatePlanAuto = () => {
     };
 
     return (
-        <div className="manual-plan-wrapper">
-            <Navbar role="user" />
+        <div className="create-plan-auto">
+
+        <Navbar role="user" />
             <div className="manual-plan-container">
-                <div className="manual-left">
+                <div className="content">
                     <form onSubmit={handleSubmit}>
                         {/* --- Płeć i wiek --- */}
                         <div className="section">
@@ -195,13 +197,19 @@ const CreatePlanAuto = () => {
                             <Select
                                 isMulti
                                 options={goals.map((g) => ({ value: g.id, label: g.name }))}
-                                onChange={(selected) =>
+                                value={form.goals.map((g) => ({ value: g.id, label: g.name }))}
+                                onChange={(selected) => {
+                                    if (selected.length > MAX_GOALS) {
+                                        alert(`Możesz wybrać maksymalnie ${MAX_GOALS} cele pielęgnacyjne.`);
+                                        return;
+                                    }
                                     setForm({
                                         ...form,
                                         goals: selected.map((s) => ({ id: s.value, name: s.label })),
-                                    })
-                                }
+                                    });
+                                }}
                             />
+
                         </div>
 
                         {/* --- Preferencje --- */}
